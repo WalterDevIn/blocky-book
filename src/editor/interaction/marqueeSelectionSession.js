@@ -9,6 +9,7 @@ export function startMarqueeSelectionSession({ event, page, pageElement, editorS
   event.stopPropagation();
 
   const start = pointerToPageMm(event, pageElement);
+  const marqueeElement = createMarqueeElement(pageElement);
   let latest = start;
   let hasMoved = false;
 
@@ -19,10 +20,7 @@ export function startMarqueeSelectionSession({ event, page, pageElement, editorS
     const rect = getSelectionRect(start, latest);
     hasMoved = rect.width >= MIN_MARQUEE_SIZE_MM || rect.height >= MIN_MARQUEE_SIZE_MM;
 
-    editorState.interaction.marquee = {
-      pageId: page.id,
-      rect,
-    };
+    setMarqueeFrame(marqueeElement, rect);
 
     const blockIds = page.blocks
       .filter((block) => framesIntersect(block.frame, rect))
@@ -35,8 +33,7 @@ export function startMarqueeSelectionSession({ event, page, pageElement, editorS
     safeReleasePointerCapture(pageElement, upEvent.pointerId);
     window.removeEventListener("pointermove", move);
     window.removeEventListener("pointerup", up);
-
-    editorState.interaction.marquee = null;
+    marqueeElement.remove();
 
     if (hasMoved) {
       controller.openSelectionContextMenu(upEvent.clientX, upEvent.clientY);
@@ -49,6 +46,20 @@ export function startMarqueeSelectionSession({ event, page, pageElement, editorS
   window.addEventListener("pointermove", move);
   window.addEventListener("pointerup", up);
   return true;
+}
+
+function createMarqueeElement(pageElement) {
+  const marqueeElement = document.createElement("div");
+  marqueeElement.className = "selection-marquee";
+  pageElement.appendChild(marqueeElement);
+  return marqueeElement;
+}
+
+function setMarqueeFrame(element, rect) {
+  element.style.left = `${rect.x}mm`;
+  element.style.top = `${rect.y}mm`;
+  element.style.width = `${rect.width}mm`;
+  element.style.height = `${rect.height}mm`;
 }
 
 function getSelectionRect(start, end) {
