@@ -11,6 +11,7 @@ export function createBlockElement({ block, page, pageElement, editorState, cont
 
   const blockElement = el("article", {
     className: getBlockClassName({ block, editorState, isSelected, isEditing }),
+    dataset: { blockId: block.id },
     style: {
       ...frameToCss(block.frame),
       ...commonStyleToCss(commonStyle),
