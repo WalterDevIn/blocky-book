@@ -11,6 +11,7 @@ function getBlockClassName({ block, editorState, isSelected, isEditing }) {
     `block--${block.type}`,
     isSelected ? "is-selected" : "",
     isEditing ? "is-editing" : "",
+    editorState.interaction.pickingBlockId === block.id ? "is-picking" : "",
     editorState.interaction.draggingBlockId === block.id ? "is-dragging" : "",
     editorState.interaction.droppingBlockId === block.id ? "is-dropping" : "",
   ].filter(Boolean).join(" ");
