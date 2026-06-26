@@ -14,6 +14,7 @@ export function startBlockResizeSession({ event, block, pageElement, controller 
 
   const move = (moveEvent) => {
     latestFrame = getResizedFrame(moveEvent, {
+      block,
       pageElement,
       startPointer,
       startFrame,
