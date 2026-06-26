@@ -5,7 +5,7 @@ import { el } from "../shared/dom.js";
 import { frameToCss } from "../shared/geometry.js";
 import { commonStyleToCss } from "./blockStyleCss.js";
 
-export function createBlockElement({ block, page, pageElement, editorState, controller, commonStyle, children = [] }) {
+export function createBlockElement({ block, page, pageElement, editorState, controller, commonStyle, children = [], style = {} }) {
   const isSelected = editorState.selection.blockId === block.id;
   const isEditing = isEditingBlock(editorState, block.id);
 
@@ -14,6 +14,7 @@ export function createBlockElement({ block, page, pageElement, editorState, cont
     style: {
       ...frameToCss(block.frame),
       ...commonStyleToCss(commonStyle),
+      ...style,
     },
     on: {
       pointerdown: (event) => {
