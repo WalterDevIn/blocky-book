@@ -1,5 +1,7 @@
+import { startMarqueeSelectionSession } from "../editor/interaction/marqueeSelectionSession.js";
 import { readEditedText } from "../editor/textEditing.js";
 import { el } from "../shared/dom.js";
+import { frameToCss } from "../shared/geometry.js";
 import { renderBlock } from "./renderBlock.js";
 import { renderRingMargin } from "./renderRingMargin.js";
 
@@ -40,11 +42,16 @@ function renderPage({ page, pageNumber, pageSide, editorState, controller }) {
     on: {
       pointerdown: (event) => {
         if (event.target !== pageElement) return;
+
+        if (event.button === 2) {
+          startMarqueeSelectionSession({ event, page, pageElement, editorState, controller });
+          return;
+        }
+
         controller.clearSelection(readEditedText);
       },
       contextmenu: (event) => {
         event.preventDefault();
-        controller.clearSelection(readEditedText);
       },
     },
   });
@@ -56,6 +63,14 @@ function renderPage({ page, pageNumber, pageSide, editorState, controller }) {
   page.blocks.forEach((block) => {
     pageElement.appendChild(renderBlock({ block, page, pageElement, editorState, controller }));
   });
+
+  const marquee = editorState.interaction.marquee;
+  if (marquee?.pageId === page.id) {
+    pageElement.appendChild(el("div", {
+      className: "selection-marquee",
+      style: frameToCss(marquee.rect),
+    }));
+  }
 
   pageElement.appendChild(el("div", {
     className: "page__label",
