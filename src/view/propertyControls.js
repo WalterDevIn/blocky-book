@@ -12,9 +12,8 @@ export function field(label, control) {
 }
 
 export function selectControl({ value, options, onChange }) {
-  return el("select", {
+  const select = el("select", {
     className: "property-control",
-    value,
     on: {
       keydown: stopEditorShortcut,
       change: (event) => onChange(event.target.value),
@@ -23,6 +22,9 @@ export function selectControl({ value, options, onChange }) {
     value: option.value,
     textContent: option.label,
   })));
+
+  select.value = value;
+  return select;
 }
 
 export function numberControl({ value, min, max, step = 1, onChange }) {
