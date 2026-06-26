@@ -1,5 +1,3 @@
-import "./styles.css";
-
 const PAGE_WIDTH_MM = 85;
 const PAGE_HEIGHT_MM = 147.5;
 const GRID_MM = 5;
@@ -16,26 +14,38 @@ const state = {
   showGrid: true,
   selectedId: null,
   editingId: null,
-  spreads: [createSpread()],
+  spreads: [],
 };
+
+let idCounter = 0;
+let appRoot = null;
+
+function createId() {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  idCounter += 1;
+  return `id-${Date.now()}-${idCounter}`;
+}
 
 function createSpread() {
   return {
-    id: crypto.randomUUID(),
+    id: createId(),
     pages: [createPage(), createPage()],
   };
 }
 
 function createPage() {
   return {
-    id: crypto.randomUUID(),
+    id: createId(),
     blocks: [],
   };
 }
 
 function createBlock(overrides = {}) {
   return {
-    id: crypto.randomUUID(),
+    id: createId(),
     ...DEFAULT_BLOCK,
     ...overrides,
   };
@@ -84,6 +94,7 @@ function addTextBlock() {
   const firstPage = state.spreads[0].pages[0];
   firstPage.blocks.push(createBlock());
   state.selectedId = firstPage.blocks.at(-1).id;
+  state.editingId = null;
   render();
 }
 
@@ -124,7 +135,7 @@ function startDragging(event, block, pageElement) {
   const startX = block.x;
   const startY = block.y;
 
-  pageElement.setPointerCapture(event.pointerId);
+  pageElement.setPointerCapture?.(event.pointerId);
 
   const move = (moveEvent) => {
     const current = mmFromPointer(moveEvent, pageElement);
@@ -153,7 +164,7 @@ function startResizing(event, block, pageElement) {
   const startWidth = block.width;
   const startHeight = block.height;
 
-  pageElement.setPointerCapture(event.pointerId);
+  pageElement.setPointerCapture?.(event.pointerId);
 
   const move = (moveEvent) => {
     const current = mmFromPointer(moveEvent, pageElement);
@@ -230,10 +241,14 @@ function textBlockComponent(block, pageElement) {
 
   blockElement.addEventListener("pointerdown", (event) => {
     event.stopPropagation();
+    const wasSelected = state.selectedId === block.id;
     state.selectedId = block.id;
     state.editingId = state.editingId === block.id ? block.id : null;
     startDragging(event, block, pageElement);
-    render();
+
+    if (!wasSelected) {
+      render();
+    }
   });
 
   blockElement.addEventListener("dblclick", (event) => {
@@ -354,15 +369,28 @@ function spreadsComponent() {
   return viewport;
 }
 
+function renderError(error) {
+  if (!appRoot) return;
+
+  appRoot.innerHTML = `
+    <main class="boot-error">
+      <h1>No se pudo iniciar el editor</h1>
+      <p>Hay un error de JavaScript. Abrí la consola del navegador para ver el detalle.</p>
+      <pre>${String(error?.stack || error)}</pre>
+    </main>
+  `;
+}
+
 function render() {
-  const app = document.querySelector("#app");
-  app.innerHTML = "";
+  if (!appRoot) return;
+
+  appRoot.innerHTML = "";
 
   const shell = document.createElement("div");
   shell.className = "app-shell";
   shell.append(toolbarComponent(), spreadsComponent());
 
-  app.appendChild(shell);
+  appRoot.appendChild(shell);
 }
 
 window.addEventListener("keydown", (event) => {
@@ -374,4 +402,24 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
-render();
+function boot() {
+  appRoot = document.querySelector("#app");
+
+  if (!appRoot) {
+    throw new Error("No existe el elemento #app en index.html");
+  }
+
+  state.spreads = [createSpread()];
+  render();
+}
+
+try {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+} catch (error) {
+  console.error(error);
+  renderError(error);
+}
