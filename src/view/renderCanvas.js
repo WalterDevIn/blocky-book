@@ -1,6 +1,7 @@
 import { readEditedText } from "../editor/textEditing.js";
 import { el } from "../shared/dom.js";
 import { renderBlock } from "./renderBlock.js";
+import { renderRingMargin } from "./renderRingMargin.js";
 
 export function renderCanvas({ editorState, controller }) {
   const viewport = el("main", { className: "editor-viewport" });
@@ -11,8 +12,9 @@ export function renderCanvas({ editorState, controller }) {
   editorState.document.spreads.forEach((spread) => {
     const spreadElement = el("div", { className: "spread" });
 
-    spread.pages.forEach((page) => {
-      const pageElement = renderPage({ page, pageNumber, editorState, controller });
+    spread.pages.forEach((page, pageIndex) => {
+      const pageSide = pageIndex === 0 ? "left" : "right";
+      const pageElement = renderPage({ page, pageNumber, pageSide, editorState, controller });
       spreadElement.appendChild(pageElement);
       pageNumber += 1;
     });
@@ -24,9 +26,9 @@ export function renderCanvas({ editorState, controller }) {
   return viewport;
 }
 
-function renderPage({ page, pageNumber, editorState, controller }) {
+function renderPage({ page, pageNumber, pageSide, editorState, controller }) {
   const pageElement = el("section", {
-    className: `page${editorState.viewport.showGrid ? " is-grid-visible" : ""}`,
+    className: `page page--${pageSide}${editorState.viewport.showGrid ? " is-grid-visible" : ""}`,
     dataset: { pageId: page.id },
     on: {
       pointerdown: (event) => {
@@ -39,6 +41,10 @@ function renderPage({ page, pageNumber, editorState, controller }) {
       },
     },
   });
+
+  if (editorState.viewport.showPageMargin) {
+    pageElement.appendChild(renderRingMargin({ pageSide }));
+  }
 
   page.blocks.forEach((block) => {
     pageElement.appendChild(renderBlock({ block, page, pageElement, editorState, controller }));
