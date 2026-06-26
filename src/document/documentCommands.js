@@ -1,6 +1,7 @@
 import { createBlock, createSpread } from "./documentFactory.js";
 import { findBlockById, findPageById, getFirstPage } from "./documentQueries.js";
 import { constrainFrameToPage } from "../shared/geometry.js";
+import { mergePlainObjects } from "../shared/objectMerge.js";
 
 export function addSpread(documentModel) {
   const spread = createSpread();
@@ -59,10 +60,7 @@ export function updateBlockProps(documentModel, blockId, nextProps) {
   const found = findBlockById(documentModel, blockId);
   if (!found) return null;
 
-  found.block.props = {
-    ...found.block.props,
-    ...nextProps,
-  };
+  found.block.props = mergePlainObjects(found.block.props, nextProps);
 
   return found.block;
 }
