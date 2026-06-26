@@ -228,10 +228,7 @@ function renderInternalGridProperties({ block, controller }) {
   return section("Cuadrícula interna", [
     field("Color", colorControl({
       value: gridStyle.color,
-      onChange: (value) => {
-        updateCommonStyle(controller, block, { borderColor: value });
-        updateInternalGridStyle(controller, block, { color: value });
-      },
+      onChange: (value) => updateGridColor(controller, block, value),
     })),
     field("Opacidad", numberControl({
       value: gridStyle.opacity,
@@ -261,4 +258,11 @@ function updateRuledTextStyle(controller, block, patch) {
 
 function updateInternalGridStyle(controller, block, patch) {
   controller.updateBlockProps(block.id, { internalGrid: patch });
+}
+
+function updateGridColor(controller, block, color) {
+  controller.updateBlockProps(block.id, {
+    style: { borderColor: color },
+    internalGrid: { color },
+  });
 }
