@@ -2,12 +2,14 @@ import { BLOCK_TYPES } from "../blocks/blockTypes.js";
 import {
   addBlockToPage,
   addSpread as addSpreadToDocument,
+  cloneBlockToPage,
   deleteBlock,
   moveBlockToPage,
   updateBlockFrame as updateDocumentBlockFrame,
   updateBlockProps as updateDocumentBlockProps,
 } from "../document/documentCommands.js";
 import { findBlockById, getFirstPage } from "../document/documentQueries.js";
+import { saveStoredDocument } from "../document/documentStorage.js";
 import { updateEditorSettings } from "../settings/editorSettingsStorage.js";
 
 const DROP_ANIMATION_MS = 180;
@@ -20,6 +22,7 @@ export function createEditorController({ editorState, render }) {
     const text = readText?.(blockId);
     if (typeof text === "string") {
       updateDocumentBlockProps(editorState.document, blockId, { text });
+      saveDocument();
     }
 
     editorState.interaction.editingBlockId = null;
@@ -34,7 +37,12 @@ export function createEditorController({ editorState, render }) {
     editorState.selection = { blockId: block.id, pageId: page.id };
     editorState.interaction.contextMenu = null;
     editorState.interaction.editingBlockId = null;
+    saveDocument();
     render();
+  }
+
+  function saveDocument() {
+    saveStoredDocument(editorState.document);
   }
 
   return {
@@ -47,6 +55,7 @@ export function createEditorController({ editorState, render }) {
     addSpread() {
       addSpreadToDocument(editorState.document);
       editorState.interaction.contextMenu = null;
+      saveDocument();
       render();
     },
 
@@ -61,8 +70,32 @@ export function createEditorController({ editorState, render }) {
         editorState.interaction.draggingBlockId = null;
         editorState.interaction.droppingBlockId = null;
         editorState.interaction.contextMenu = null;
+        saveDocument();
         render();
       }
+    },
+
+    copySelectedBlock() {
+      const found = findBlockById(editorState.document, editorState.selection.blockId);
+      if (!found) return;
+
+      editorState.clipboard.block = structuredClone(found.block);
+    },
+
+    pasteCopiedBlock() {
+      const copiedBlock = editorState.clipboard.block;
+      if (!copiedBlock) return;
+
+      const targetPageId = editorState.selection.pageId ?? getFirstPage(editorState.document)?.id;
+      const block = cloneBlockToPage(editorState.document, copiedBlock, targetPageId);
+      if (!block) return;
+
+      editorState.selection = { blockId: block.id, pageId: targetPageId };
+      editorState.interaction.contextMenu = null;
+      editorState.interaction.editingBlockId = null;
+      editorState.clipboard.block = structuredClone(block);
+      saveDocument();
+      render();
     },
 
     selectBlock(blockId, pageId, { shouldRender = true } = {}) {
@@ -108,11 +141,13 @@ export function createEditorController({ editorState, render }) {
       editorState.interaction.pickingBlockId = null;
       editorState.interaction.draggingBlockId = null;
       editorState.interaction.contextMenu = null;
+      saveDocument();
       if (shouldRender) render();
     },
 
     commitBlockResize(blockId, frame, { shouldRender = true } = {}) {
       updateDocumentBlockFrame(editorState.document, blockId, frame);
+      saveDocument();
       if (shouldRender) render();
     },
 
@@ -132,11 +167,13 @@ export function createEditorController({ editorState, render }) {
 
     updateBlockFrame(blockId, frame) {
       updateDocumentBlockFrame(editorState.document, blockId, frame);
+      saveDocument();
       render();
     },
 
     updateBlockProps(blockId, props) {
       updateDocumentBlockProps(editorState.document, blockId, props);
+      saveDocument();
       render();
     },
 
@@ -148,6 +185,7 @@ export function createEditorController({ editorState, render }) {
         ...editorState.document.intent,
         snapUnitMm: nextSettings.pageSpec.gridMm,
       };
+      saveDocument();
       render();
     },
 
