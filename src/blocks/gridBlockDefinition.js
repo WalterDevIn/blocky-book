@@ -4,6 +4,7 @@ export const GRID_BLOCK_DEFAULT_PROPS = {
   text: "Texto en cuadrícula",
   style: {
     backgroundColor: "#ffffff",
+    textColor: "#1f2328",
     fontFamily: "Arial",
     fontSizePt: 10,
     hasBorder: true,
@@ -18,6 +19,9 @@ export const GRID_BLOCK_DEFAULT_PROPS = {
     lineVerticalAlign: "middle",
     paddingMm: 1,
     lineHeightMm: 5,
+    showLines: false,
+    lineColor: "#94a3b8",
+    lineOpacity: 0.45,
   },
   internalGrid: {
     color: "#94a3b8",
