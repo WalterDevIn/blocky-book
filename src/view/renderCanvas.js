@@ -27,9 +27,16 @@ export function renderCanvas({ editorState, controller }) {
 }
 
 function renderPage({ page, pageNumber, pageSide, editorState, controller }) {
+  const pageSpec = editorState.document.pageSpec;
   const pageElement = el("section", {
     className: `page page--${pageSide}${editorState.viewport.showGrid ? " is-grid-visible" : ""}`,
     dataset: { pageId: page.id },
+    style: {
+      width: `${pageSpec.widthMm}mm`,
+      height: `${pageSpec.heightMm}mm`,
+      backgroundColor: pageSpec.background,
+      backgroundSize: editorState.viewport.showGrid ? `${pageSpec.gridMm}mm ${pageSpec.gridMm}mm` : undefined,
+    },
     on: {
       pointerdown: (event) => {
         if (event.target !== pageElement) return;
