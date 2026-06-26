@@ -8,6 +8,7 @@ import {
   updateBlockProps as updateDocumentBlockProps,
 } from "../document/documentCommands.js";
 import { findBlockById, getFirstPage } from "../document/documentQueries.js";
+import { updateEditorSettings } from "../settings/editorSettingsStorage.js";
 
 const DROP_ANIMATION_MS = 180;
 
@@ -136,6 +137,17 @@ export function createEditorController({ editorState, render }) {
 
     updateBlockProps(blockId, props) {
       updateDocumentBlockProps(editorState.document, blockId, props);
+      render();
+    },
+
+    updatePageSize(patch) {
+      const nextSettings = updateEditorSettings({ pageSpec: patch });
+      editorState.settings = nextSettings;
+      editorState.document.pageSpec = nextSettings.pageSpec;
+      editorState.document.intent = {
+        ...editorState.document.intent,
+        snapUnitMm: nextSettings.pageSpec.gridMm,
+      };
       render();
     },
 
