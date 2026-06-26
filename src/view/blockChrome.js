@@ -1,12 +1,12 @@
 import { handleBlockPointerDown, handleResizePointerDown } from "../editor/blockInteraction.js";
-import { isEditingBlock } from "../editor/editorSelectors.js";
+import { isEditingBlock, isSelectedBlock } from "../editor/editorSelectors.js";
 import { readEditedText } from "../editor/textEditing.js";
 import { el } from "../shared/dom.js";
 import { frameToCss } from "../shared/geometry.js";
 import { commonStyleToCss } from "./blockStyleCss.js";
 
 export function createBlockElement({ block, page, pageElement, editorState, controller, commonStyle, children = [], style = {} }) {
-  const isSelected = editorState.selection.blockId === block.id;
+  const isSelected = isSelectedBlock(editorState, block.id);
   const isEditing = isEditingBlock(editorState, block.id);
 
   const blockElement = el("article", {
