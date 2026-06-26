@@ -1,3 +1,4 @@
+import { canEditBlockText } from "../../blocks/blockCapabilities.js";
 import { safeReleasePointerCapture } from "../../shared/geometry.js";
 import { focusEditable, readEditedText } from "../textEditing.js";
 import { createDragGhost, dropDragGhost, moveDragGhost } from "./dragGhost.js";
@@ -81,7 +82,7 @@ export function startBlockDragSession({ event, block, page, pageElement, editorS
 
     blockElement.classList.remove("is-drag-source");
 
-    if (wasSelected && !moved && !pickedUp) {
+    if (wasSelected && !moved && !pickedUp && canEditBlockText(block)) {
       controller.startTextEdit(block.id);
       focusEditable(block.id);
       return;
