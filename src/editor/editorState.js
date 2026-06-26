@@ -1,8 +1,12 @@
 import { createPrintDocument } from "../document/documentFactory.js";
+import { loadEditorSettings } from "../settings/editorSettingsStorage.js";
 
 export function createEditorState() {
+  const settings = loadEditorSettings();
+
   return {
-    document: createPrintDocument(),
+    document: createPrintDocument({ pageSpec: settings.pageSpec }),
+    settings,
     viewport: {
       zoom: 1,
       showGrid: true,
