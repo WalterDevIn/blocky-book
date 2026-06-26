@@ -3,14 +3,17 @@ import {
   addBlockToPage,
   addSpread as addSpreadToDocument,
   cloneBlockToPage,
-  deleteBlock,
+  deleteBlocks,
   moveBlockToPage,
+  translateBlocks,
   updateBlockFrame as updateDocumentBlockFrame,
   updateBlockProps as updateDocumentBlockProps,
+  updateBlocksProps as updateDocumentBlocksProps,
 } from "../document/documentCommands.js";
 import { findBlockById, getFirstPage } from "../document/documentQueries.js";
 import { saveStoredDocument } from "../document/documentStorage.js";
 import { updateEditorSettings } from "../settings/editorSettingsStorage.js";
+import { createSelection, getSelectedBlockIds } from "./selectionHelpers.js";
 
 const DROP_ANIMATION_MS = 180;
 
@@ -34,7 +37,7 @@ export function createEditorController({ editorState, render }) {
   function addBlock(type) {
     const page = getFirstPage(editorState.document);
     const block = addBlockToPage(editorState.document, page.id, type);
-    editorState.selection = { blockId: block.id, pageId: page.id };
+    editorState.selection = createSelection([block.id], page.id);
     editorState.interaction.contextMenu = null;
     editorState.interaction.editingBlockId = null;
     saveDocument();
@@ -60,11 +63,11 @@ export function createEditorController({ editorState, render }) {
     },
 
     deleteSelectedBlock() {
-      const blockId = editorState.selection.blockId;
-      if (!blockId) return;
+      const blockIds = getSelectedBlockIds(editorState);
+      if (blockIds.length === 0) return;
 
-      if (deleteBlock(editorState.document, blockId)) {
-        editorState.selection = { blockId: null, pageId: null };
+      if (deleteBlocks(editorState.document, blockIds)) {
+        editorState.selection = createSelection([]);
         editorState.interaction.editingBlockId = null;
         editorState.interaction.pickingBlockId = null;
         editorState.interaction.draggingBlockId = null;
@@ -90,7 +93,7 @@ export function createEditorController({ editorState, render }) {
       const block = cloneBlockToPage(editorState.document, copiedBlock, targetPageId);
       if (!block) return;
 
-      editorState.selection = { blockId: block.id, pageId: targetPageId };
+      editorState.selection = createSelection([block.id], targetPageId);
       editorState.interaction.contextMenu = null;
       editorState.interaction.editingBlockId = null;
       editorState.clipboard.block = structuredClone(block);
@@ -99,14 +102,20 @@ export function createEditorController({ editorState, render }) {
     },
 
     selectBlock(blockId, pageId, { shouldRender = true } = {}) {
-      editorState.selection = { blockId, pageId };
+      editorState.selection = createSelection([blockId], pageId);
+      editorState.interaction.contextMenu = null;
+      if (shouldRender) render();
+    },
+
+    selectBlocks(blockIds, pageId, { shouldRender = true } = {}) {
+      editorState.selection = createSelection(blockIds, pageId);
       editorState.interaction.contextMenu = null;
       if (shouldRender) render();
     },
 
     clearSelection(readText) {
       commitTextEdit(readText, { shouldRender: false });
-      editorState.selection = { blockId: null, pageId: null };
+      editorState.selection = createSelection([]);
       editorState.interaction.contextMenu = null;
       render();
     },
@@ -115,7 +124,7 @@ export function createEditorController({ editorState, render }) {
       const found = findBlockById(editorState.document, blockId);
       if (!found) return;
 
-      editorState.selection = { blockId, pageId: found.page.id };
+      editorState.selection = createSelection([blockId], found.page.id);
       editorState.interaction.editingBlockId = blockId;
       editorState.interaction.contextMenu = null;
       render();
@@ -132,11 +141,27 @@ export function createEditorController({ editorState, render }) {
     },
 
     commitBlockMove(blockId, targetPageId, frame, { shouldRender = true } = {}) {
-      const movedBlock = moveBlockToPage(editorState.document, blockId, targetPageId);
-      if (!movedBlock) return;
+      const selectedIds = getSelectedBlockIds(editorState);
+      const isGroupMove = selectedIds.length > 1 && selectedIds.includes(blockId);
 
-      updateDocumentBlockFrame(editorState.document, blockId, frame);
-      editorState.selection = { blockId, pageId: targetPageId };
+      if (isGroupMove) {
+        const found = findBlockById(editorState.document, blockId);
+        if (!found) return;
+
+        const delta = {
+          x: frame.x - found.block.frame.x,
+          y: frame.y - found.block.frame.y,
+        };
+        translateBlocks(editorState.document, selectedIds, delta);
+        editorState.selection = createSelection(selectedIds, found.page.id);
+      } else {
+        const movedBlock = moveBlockToPage(editorState.document, blockId, targetPageId);
+        if (!movedBlock) return;
+
+        updateDocumentBlockFrame(editorState.document, blockId, frame);
+        editorState.selection = createSelection([blockId], targetPageId);
+      }
+
       editorState.interaction.mode = "idle";
       editorState.interaction.pickingBlockId = null;
       editorState.interaction.draggingBlockId = null;
@@ -177,6 +202,15 @@ export function createEditorController({ editorState, render }) {
       render();
     },
 
+    updateSelectedBlockProps(props) {
+      const blockIds = getSelectedBlockIds(editorState);
+      if (blockIds.length === 0) return;
+
+      updateDocumentBlocksProps(editorState.document, blockIds, props);
+      saveDocument();
+      render();
+    },
+
     updatePageSize(patch) {
       const nextSettings = updateEditorSettings({ pageSpec: patch });
       editorState.settings = nextSettings;
@@ -194,10 +228,27 @@ export function createEditorController({ editorState, render }) {
       const found = findBlockById(editorState.document, blockId);
       if (!found) return;
 
-      editorState.selection = { blockId, pageId: found.page.id };
+      const selectedIds = getSelectedBlockIds(editorState);
+      const nextIds = selectedIds.includes(blockId) ? selectedIds : [blockId];
+      editorState.selection = createSelection(nextIds, found.page.id);
       editorState.interaction.contextMenu = {
         kind: "block-properties",
-        blockId,
+        blockId: nextIds[0],
+        blockIds: nextIds,
+        x: clientX,
+        y: clientY,
+      };
+      render();
+    },
+
+    openSelectionContextMenu(clientX, clientY) {
+      const blockIds = getSelectedBlockIds(editorState);
+      if (blockIds.length === 0) return;
+
+      editorState.interaction.contextMenu = {
+        kind: "block-properties",
+        blockId: blockIds[0],
+        blockIds,
         x: clientX,
         y: clientY,
       };
