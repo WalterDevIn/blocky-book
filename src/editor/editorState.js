@@ -18,6 +18,7 @@ export function createEditorState() {
     },
     selection: {
       blockId: null,
+      blockIds: [],
       pageId: null,
     },
     interaction: {
@@ -27,6 +28,7 @@ export function createEditorState() {
       draggingBlockId: null,
       droppingBlockId: null,
       contextMenu: null,
+      marquee: null,
     },
     activeTool: "select",
   };
