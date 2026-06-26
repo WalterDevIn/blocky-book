@@ -312,6 +312,32 @@ button:hover:not(:disabled) {
   transform-origin: center;
 }
 
+.block__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  pointer-events: none;
+}
+
+.block__image-placeholder {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 2mm;
+  color: inherit;
+  font-size: 9pt;
+  text-align: center;
+  background-image:
+    linear-gradient(45deg, rgba(100, 116, 139, 0.18) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(100, 116, 139, 0.18) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(100, 116, 139, 0.18) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(100, 116, 139, 0.18) 75%);
+  background-position: 0 0, 0 2mm, 2mm -2mm, -2mm 0;
+  background-size: 4mm 4mm;
+}
+
 .resize-handle {
   position: absolute;
   right: -6px;
