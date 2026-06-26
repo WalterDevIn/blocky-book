@@ -47,6 +47,7 @@ export function getBlockDisplayName(block) {
   if (block.type === BLOCK_TYPES.ruledText) return "Texto normal";
   if (block.type === BLOCK_TYPES.gridBlock) return "Cuadrícula";
   if (block.type === BLOCK_TYPES.image) return "Imagen";
+  if (block.type === BLOCK_TYPES.icon) return "Ícono";
   return block.type;
 }
 
@@ -137,6 +138,10 @@ export function renderSpecificProperties({ block, controller }) {
 
   if (block.type === BLOCK_TYPES.image) {
     return renderImageProperties({ block, controller });
+  }
+
+  if (block.type === BLOCK_TYPES.icon) {
+    return renderIconProperties({ block, controller });
   }
 
   return null;
@@ -277,6 +282,21 @@ function renderImageProperties({ block, controller }) {
   ]);
 }
 
+function renderIconProperties({ block, controller }) {
+  const icon = {
+    className: "fa-solid fa-star",
+    ...block.props.icon,
+  };
+
+  return section("Ícono", [
+    field("Clase", textControl({
+      value: icon.className,
+      placeholder: "fa-solid fa-star",
+      onChange: (value) => updateIconProps(controller, block, { className: value }),
+    })),
+  ]);
+}
+
 function updateCommonStyle(controller, block, patch) {
   controller.updateBlockProps(block.id, { style: patch });
 }
@@ -306,4 +326,8 @@ function updateGridColor(controller, block, color) {
 
 function updateImageProps(controller, block, patch) {
   controller.updateBlockProps(block.id, { image: patch });
+}
+
+function updateIconProps(controller, block, patch) {
+  controller.updateBlockProps(block.id, { icon: patch });
 }
