@@ -30,15 +30,17 @@ export function getDraggedFrame(event, block, targetPageElement, pointerOffsetMm
   };
 }
 
-export function getResizedFrame(event, { pageElement, startPointer, startFrame }) {
+export function getResizedFrame(event, { block, pageElement, startPointer, startFrame }) {
   const current = pointerToPageMm(event, pageElement);
-  const nextWidth = snapMm(startFrame.width + current.x - startPointer.x);
-  const nextHeight = snapMm(startFrame.height + current.y - startPointer.y);
+  const snapStepMm = getBlockResizeSnapMm(block);
+  const minSize = getBlockMinimumSize(block);
+  const nextWidth = snapMm(startFrame.width + current.x - startPointer.x, snapStepMm);
+  const nextHeight = snapMm(startFrame.height + current.y - startPointer.y, snapStepMm);
 
   return {
     ...startFrame,
-    width: clamp(nextWidth, PAGE_SPEC.gridMm, PAGE_SPEC.widthMm - startFrame.x),
-    height: clamp(nextHeight, PAGE_SPEC.gridMm, PAGE_SPEC.heightMm - startFrame.y),
+    width: clamp(nextWidth, minSize.widthMm, PAGE_SPEC.widthMm - startFrame.x),
+    height: clamp(nextHeight, minSize.heightMm, PAGE_SPEC.heightMm - startFrame.y),
   };
 }
 
@@ -52,4 +54,17 @@ export function setBlockElementFrame(element, frame) {
 function getBlockMoveSnapMm(block) {
   if (block.type === BLOCK_TYPES.line) return PAGE_SPEC.gridMm / 2;
   return PAGE_SPEC.gridMm;
+}
+
+function getBlockResizeSnapMm(block) {
+  if (block.type === BLOCK_TYPES.line) return PAGE_SPEC.gridMm / 2;
+  return PAGE_SPEC.gridMm;
+}
+
+function getBlockMinimumSize(block) {
+  if (block.type === BLOCK_TYPES.line) {
+    return { widthMm: 5, heightMm: 0.5 };
+  }
+
+  return { widthMm: PAGE_SPEC.gridMm, heightMm: PAGE_SPEC.gridMm };
 }
