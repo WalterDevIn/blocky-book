@@ -36,7 +36,7 @@ export function ruledTextStyleToCss(ruledTextStyle) {
   return {
     textAlign: ruledTextStyle.horizontalAlign,
     lineHeight: `${ruledTextStyle.lineHeightMm}mm`,
-    backgroundPositionY: lineVerticalAlignToBackgroundOffset(ruledTextStyle.lineVerticalAlign),
+    transform: `translateY(${lineVerticalAlignToTextOffset(ruledTextStyle.lineVerticalAlign)})`,
   };
 }
 
@@ -60,12 +60,12 @@ function verticalAlignToGridValue(verticalAlign) {
   return map[verticalAlign] ?? "center";
 }
 
-function lineVerticalAlignToBackgroundOffset(verticalAlign) {
+function lineVerticalAlignToTextOffset(verticalAlign) {
   const map = {
-    start: "0mm",
-    middle: "1.7mm",
-    end: "3.4mm",
+    start: "-0.7mm",
+    middle: "0mm",
+    end: "0.7mm",
   };
 
-  return map[verticalAlign] ?? "1.7mm";
+  return map[verticalAlign] ?? "0mm";
 }
