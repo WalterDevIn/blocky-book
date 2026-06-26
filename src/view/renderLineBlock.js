@@ -10,7 +10,6 @@ export function renderLineBlock({ block, page, pageElement, editorState, control
     style: {
       height: `${lineStyle.thicknessMm}mm`,
       backgroundColor: commonStyle.backgroundColor,
-      transform: `rotate(${lineStyle.angleDeg}deg)`,
     },
   });
 
@@ -24,6 +23,9 @@ export function renderLineBlock({ block, page, pageElement, editorState, control
       ...commonStyle,
       backgroundColor: "transparent",
       hasBorder: false,
+    },
+    style: {
+      transform: `rotate(${lineStyle.angleDeg}deg)`,
     },
     children: [line],
   });
