@@ -49,20 +49,22 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
+function safeReleasePointerCapture(element, pointerId) {
+  try {
+    if (element.hasPointerCapture(pointerId)) {
+      element.releasePointerCapture(pointerId);
+    }
+  } catch {
+    // The page can be re-rendered during drag; releasing capture is best-effort.
+  }
+}
+
 function getSelectedBlock() {
   for (const spread of state.spreads) {
     for (const page of spread.pages) {
       const block = page.blocks.find((item) => item.id === state.selectedId);
       if (block) return { block, page };
     }
-  }
-  return null;
-}
-
-function getPageById(pageId) {
-  for (const spread of state.spreads) {
-    const page = spread.pages.find((item) => item.id === pageId);
-    if (page) return page;
   }
   return null;
 }
@@ -76,12 +78,6 @@ function mmFromPointer(event, pageElement) {
     x: (event.clientX - rect.left) * mmPerPxX,
     y: (event.clientY - rect.top) * mmPerPxY,
   };
-}
-
-function setSelected(blockId) {
-  state.selectedId = blockId;
-  state.editingId = null;
-  render();
 }
 
 function addTextBlock() {
@@ -141,7 +137,7 @@ function startDragging(event, block, pageElement) {
   };
 
   const up = (upEvent) => {
-    pageElement.releasePointerCapture(upEvent.pointerId);
+    safeReleasePointerCapture(pageElement, upEvent.pointerId);
     window.removeEventListener("pointermove", move);
     window.removeEventListener("pointerup", up);
   };
@@ -170,7 +166,7 @@ function startResizing(event, block, pageElement) {
   };
 
   const up = (upEvent) => {
-    pageElement.releasePointerCapture(upEvent.pointerId);
+    safeReleasePointerCapture(pageElement, upEvent.pointerId);
     window.removeEventListener("pointermove", move);
     window.removeEventListener("pointerup", up);
   };
@@ -235,8 +231,9 @@ function textBlockComponent(block, pageElement) {
   blockElement.addEventListener("pointerdown", (event) => {
     event.stopPropagation();
     state.selectedId = block.id;
-    if (state.editingId !== block.id) render();
+    state.editingId = state.editingId === block.id ? block.id : null;
     startDragging(event, block, pageElement);
+    render();
   });
 
   blockElement.addEventListener("dblclick", (event) => {
