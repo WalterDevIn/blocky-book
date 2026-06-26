@@ -1,7 +1,11 @@
+import { lineBackgroundToCss } from "./gridCss.js";
+
 export function commonStyleToCss(commonStyle) {
   return {
     zIndex: String(commonStyle.layer),
+    color: commonStyle.textColor,
     backgroundColor: commonStyle.backgroundColor,
+    borderColor: commonStyle.borderColor ?? commonStyle.textColor,
     borderStyle: commonStyle.hasBorder ? "solid" : "none",
     borderRadius: `${commonStyle.borderRadiusMm}mm`,
     fontFamily: commonStyle.fontFamily,
@@ -29,6 +33,7 @@ export function textStyleToCss(textStyle) {
 export function ruledTextContainerStyleToCss(ruledTextStyle) {
   return {
     padding: `${ruledTextStyle.paddingMm}mm`,
+    ...lineBackgroundToCss(ruledTextStyle),
   };
 }
 
