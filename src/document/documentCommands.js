@@ -1,5 +1,5 @@
 import { createBlock, createSpread } from "./documentFactory.js";
-import { findBlockById, getFirstPage } from "./documentQueries.js";
+import { findBlockById, findPageById, getFirstPage } from "./documentQueries.js";
 import { constrainFrameToPage } from "../shared/geometry.js";
 
 export function addSpread(documentModel) {
@@ -28,6 +28,19 @@ export function deleteBlock(documentModel, blockId) {
 
   found.page.blocks = found.page.blocks.filter((block) => block.id !== blockId);
   return true;
+}
+
+export function moveBlockToPage(documentModel, blockId, targetPageId) {
+  const foundBlock = findBlockById(documentModel, blockId);
+  const foundTarget = findPageById(documentModel, targetPageId);
+
+  if (!foundBlock || !foundTarget) return null;
+  if (foundBlock.page.id === foundTarget.page.id) return foundBlock.block;
+
+  foundBlock.page.blocks = foundBlock.page.blocks.filter((block) => block.id !== blockId);
+  foundTarget.page.blocks.push(foundBlock.block);
+
+  return foundBlock.block;
 }
 
 export function updateBlockFrame(documentModel, blockId, nextFrame) {
