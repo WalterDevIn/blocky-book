@@ -16,7 +16,7 @@ export const TEXT_BLOCK_DEFAULT_PROPS = {
   textStyle: {
     horizontalAlign: "center",
     verticalAlign: "middle",
-    hasPadding: true,
+    paddingMm: 1,
   },
 };
 
