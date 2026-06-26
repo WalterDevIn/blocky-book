@@ -1,5 +1,9 @@
 import { el } from "../shared/dom.js";
 
+function stopEditorShortcut(event) {
+  event.stopPropagation();
+}
+
 export function field(label, control) {
   return el("label", { className: "property-field" }, [
     el("span", { className: "property-field__label", textContent: label }),
@@ -11,7 +15,10 @@ export function selectControl({ value, options, onChange }) {
   return el("select", {
     className: "property-control",
     value,
-    on: { change: (event) => onChange(event.target.value) },
+    on: {
+      keydown: stopEditorShortcut,
+      change: (event) => onChange(event.target.value),
+    },
   }, options.map((option) => el("option", {
     value: option.value,
     textContent: option.label,
@@ -29,6 +36,7 @@ export function numberControl({ value, min, max, step = 1, onChange }) {
       step: String(step),
     },
     on: {
+      keydown: stopEditorShortcut,
       change: (event) => onChange(Number(event.target.value)),
     },
   });
@@ -40,7 +48,8 @@ export function colorControl({ value, onChange }) {
     type: "color",
     value,
     on: {
-      input: (event) => onChange(event.target.value),
+      keydown: stopEditorShortcut,
+      change: (event) => onChange(event.target.value),
     },
   });
 }
@@ -51,17 +60,22 @@ export function checkboxControl({ checked, onChange }) {
     type: "checkbox",
     checked,
     on: {
+      keydown: stopEditorShortcut,
       change: (event) => onChange(event.target.checked),
     },
   });
 }
 
-export function toggleButton({ label, active, onClick }) {
+export function toggleButton({ label, active, title, onClick }) {
   return el("button", {
     className: `property-toggle${active ? " is-active" : ""}`,
     type: "button",
+    title,
     textContent: label,
-    on: { click: onClick },
+    on: {
+      keydown: stopEditorShortcut,
+      click: onClick,
+    },
   });
 }
 
