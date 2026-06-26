@@ -1,5 +1,11 @@
 import { BLOCK_TYPES } from "../blocks/blockTypes.js";
-import { addBlockToPage, addSpread, deleteBlock, updateBlockFrame, updateBlockProps } from "../document/documentCommands.js";
+import {
+  addBlockToPage,
+  addSpread as addSpreadToDocument,
+  deleteBlock,
+  updateBlockFrame as updateDocumentBlockFrame,
+  updateBlockProps as updateDocumentBlockProps,
+} from "../document/documentCommands.js";
 import { findBlockById, getFirstPage } from "../document/documentQueries.js";
 
 export function createEditorController({ editorState, render }) {
@@ -9,7 +15,7 @@ export function createEditorController({ editorState, render }) {
 
     const text = readText?.(blockId);
     if (typeof text === "string") {
-      updateBlockProps(editorState.document, blockId, { text: text.trim() || "Texto" });
+      updateDocumentBlockProps(editorState.document, blockId, { text: text.trim() || "Texto" });
     }
 
     editorState.interaction.editingBlockId = null;
@@ -27,7 +33,7 @@ export function createEditorController({ editorState, render }) {
     },
 
     addSpread() {
-      addSpread(editorState.document);
+      addSpreadToDocument(editorState.document);
       editorState.interaction.contextMenu = null;
       render();
     },
@@ -79,12 +85,12 @@ export function createEditorController({ editorState, render }) {
     },
 
     updateBlockFrame(blockId, frame) {
-      updateBlockFrame(editorState.document, blockId, frame);
+      updateDocumentBlockFrame(editorState.document, blockId, frame);
       render();
     },
 
     updateBlockProps(blockId, props) {
-      updateBlockProps(editorState.document, blockId, props);
+      updateDocumentBlockProps(editorState.document, blockId, props);
       render();
     },
 
