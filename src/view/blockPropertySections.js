@@ -57,93 +57,78 @@ export function renderCommonProperties({ block, controller }) {
   return section("Bloque", [
     field("Fondo", colorControl({
       value: style.backgroundColor,
-      onChange: (value) => updateCommonStyle(controller, block, { backgroundColor: value }),
+      onChange: (value) => updateCommonStyle(controller, { backgroundColor: value }),
     })),
-    field("Color", colorControl({
+    field("Texto", colorControl({
       value: style.textColor,
-      onChange: (value) => updateCommonStyle(controller, block, { textColor: value }),
+      onChange: (value) => updateCommonStyle(controller, { textColor: value }),
+    })),
+    field("Borde color", colorControl({
+      value: style.borderColor ?? style.textColor,
+      onChange: (value) => updateCommonStyle(controller, { borderColor: value }),
     })),
     field("Fuente", selectControl({
       value: style.fontFamily,
       options: FONT_OPTIONS,
-      onChange: (value) => updateCommonStyle(controller, block, { fontFamily: value }),
+      onChange: (value) => updateCommonStyle(controller, { fontFamily: value }),
     })),
     field("Tamaño", numberControl({
       value: style.fontSizePt,
       min: 6,
       max: 72,
       step: 1,
-      onChange: (value) => updateCommonStyle(controller, block, { fontSizePt: value }),
+      onChange: (value) => updateCommonStyle(controller, { fontSizePt: value }),
     })),
     field("Borde", checkboxControl({
       checked: style.hasBorder,
-      onChange: (value) => updateCommonStyle(controller, block, { hasBorder: value }),
+      onChange: (value) => updateCommonStyle(controller, { hasBorder: value }),
     })),
     field("Radio", numberControl({
       value: style.borderRadiusMm,
       min: 0,
       max: 20,
       step: 0.5,
-      onChange: (value) => updateCommonStyle(controller, block, { borderRadiusMm: value }),
+      onChange: (value) => updateCommonStyle(controller, { borderRadiusMm: value }),
     })),
     field("Layer", numberControl({
       value: style.layer,
       min: 0,
       max: 999,
       step: 1,
-      onChange: (value) => updateCommonStyle(controller, block, { layer: value }),
+      onChange: (value) => updateCommonStyle(controller, { layer: value }),
     })),
     field("Estilo", buttonGroup([
       toggleButton({
         label: "B",
         active: style.bold,
         title: "Negrita",
-        onClick: () => updateCommonStyle(controller, block, { bold: !style.bold }),
+        onClick: () => updateCommonStyle(controller, { bold: !style.bold }),
       }),
       toggleButton({
         label: "I",
         active: style.italic,
         title: "Cursiva",
-        onClick: () => updateCommonStyle(controller, block, { italic: !style.italic }),
+        onClick: () => updateCommonStyle(controller, { italic: !style.italic }),
       }),
       toggleButton({
         label: "S",
         active: style.strike,
         title: "Tachado",
-        onClick: () => updateCommonStyle(controller, block, { strike: !style.strike }),
+        onClick: () => updateCommonStyle(controller, { strike: !style.strike }),
       }),
     ])),
   ]);
 }
 
 export function renderSpecificProperties({ block, controller }) {
-  if (block.type === BLOCK_TYPES.text) {
-    return renderTextProperties({ block, controller });
-  }
-
-  if (block.type === BLOCK_TYPES.line) {
-    return renderLineProperties({ block, controller });
-  }
-
-  if (block.type === BLOCK_TYPES.ruledText) {
-    return renderRuledTextProperties({ block, controller });
-  }
-
+  if (block.type === BLOCK_TYPES.text) return renderTextProperties({ block, controller });
+  if (block.type === BLOCK_TYPES.line) return renderLineProperties({ block, controller });
+  if (block.type === BLOCK_TYPES.ruledText) return renderRuledTextProperties({ block, controller });
   if (block.type === BLOCK_TYPES.gridBlock) {
-    return [
-      renderRuledTextProperties({ block, controller }),
-      renderInternalGridProperties({ block, controller }),
-    ];
+    return [renderRuledTextProperties({ block, controller }), renderInternalGridProperties({ block, controller })];
   }
-
-  if (block.type === BLOCK_TYPES.image) {
-    return renderImageProperties({ block, controller });
-  }
-
-  if (block.type === BLOCK_TYPES.icon) {
-    return renderIconProperties({ block, controller });
-  }
-
+  if (block.type === BLOCK_TYPES.image) return renderImageProperties({ block, controller });
+  if (block.type === BLOCK_TYPES.icon) return renderIconProperties({ block, controller });
   return null;
 }
 
@@ -154,19 +139,19 @@ function renderTextProperties({ block, controller }) {
     field("Horizontal", selectControl({
       value: textStyle.horizontalAlign,
       options: HORIZONTAL_OPTIONS,
-      onChange: (value) => updateTextStyle(controller, block, { horizontalAlign: value }),
+      onChange: (value) => updateTextStyle(controller, { horizontalAlign: value }),
     })),
     field("Vertical", selectControl({
       value: textStyle.verticalAlign,
       options: VERTICAL_OPTIONS,
-      onChange: (value) => updateTextStyle(controller, block, { verticalAlign: value }),
+      onChange: (value) => updateTextStyle(controller, { verticalAlign: value }),
     })),
     field("Relleno", numberControl({
       value: textStyle.paddingMm,
       min: 0,
       max: 20,
       step: 0.5,
-      onChange: (value) => updateTextStyle(controller, block, { paddingMm: value }),
+      onChange: (value) => updateTextStyle(controller, { paddingMm: value }),
     })),
   ]);
 }
@@ -182,14 +167,14 @@ function renderLineProperties({ block, controller }) {
         { label: "45°", value: "45" },
         { label: "90°", value: "90" },
       ],
-      onChange: (value) => updateLineStyle(controller, block, { angleDeg: Number(value) }),
+      onChange: (value) => updateLineStyle(controller, { angleDeg: Number(value) }),
     })),
     field("Grosor", numberControl({
       value: lineStyle.thicknessMm,
       min: 0.25,
       max: 5,
       step: 0.25,
-      onChange: (value) => updateLineStyle(controller, block, { thicknessMm: value }),
+      onChange: (value) => updateLineStyle(controller, { thicknessMm: value }),
     })),
   ]);
 }
@@ -201,34 +186,34 @@ function renderRuledTextProperties({ block, controller }) {
     field("Horizontal", selectControl({
       value: ruledTextStyle.horizontalAlign,
       options: HORIZONTAL_OPTIONS,
-      onChange: (value) => updateRuledTextStyle(controller, block, { horizontalAlign: value }),
+      onChange: (value) => updateRuledTextStyle(controller, { horizontalAlign: value }),
     })),
     field("Vertical línea", selectControl({
       value: ruledTextStyle.lineVerticalAlign,
       options: VERTICAL_OPTIONS,
-      onChange: (value) => updateRuledTextStyle(controller, block, { lineVerticalAlign: value }),
+      onChange: (value) => updateRuledTextStyle(controller, { lineVerticalAlign: value }),
     })),
     field("Relleno", numberControl({
       value: ruledTextStyle.paddingMm,
       min: 0,
       max: 20,
       step: 0.5,
-      onChange: (value) => updateRuledTextStyle(controller, block, { paddingMm: value }),
+      onChange: (value) => updateRuledTextStyle(controller, { paddingMm: value }),
     })),
     field("Mostrar líneas", checkboxControl({
       checked: ruledTextStyle.showLines,
-      onChange: (value) => updateRuledTextStyle(controller, block, { showLines: value }),
+      onChange: (value) => updateRuledTextStyle(controller, { showLines: value }),
     })),
     field("Color líneas", colorControl({
       value: ruledTextStyle.lineColor,
-      onChange: (value) => updateRuledTextStyle(controller, block, { lineColor: value }),
+      onChange: (value) => updateRuledTextStyle(controller, { lineColor: value }),
     })),
     field("Opacidad líneas", numberControl({
       value: ruledTextStyle.lineOpacity,
       min: 0,
       max: 1,
       step: 0.05,
-      onChange: (value) => updateRuledTextStyle(controller, block, { lineOpacity: value }),
+      onChange: (value) => updateRuledTextStyle(controller, { lineOpacity: value }),
     })),
   ]);
 }
@@ -239,36 +224,31 @@ function renderInternalGridProperties({ block, controller }) {
   return section("Cuadrícula interna", [
     field("Color", colorControl({
       value: gridStyle.color,
-      onChange: (value) => updateGridColor(controller, block, value),
+      onChange: (value) => updateGridColor(controller, value),
     })),
     field("Opacidad", numberControl({
       value: gridStyle.opacity,
       min: 0,
       max: 1,
       step: 0.05,
-      onChange: (value) => updateInternalGridStyle(controller, block, { opacity: value }),
+      onChange: (value) => updateInternalGridStyle(controller, { opacity: value }),
     })),
   ]);
 }
 
 function renderImageProperties({ block, controller }) {
-  const image = {
-    src: "",
-    alt: "Imagen",
-    objectFit: "contain",
-    ...block.props.image,
-  };
+  const image = { src: "", alt: "Imagen", objectFit: "contain", ...block.props.image };
 
   return section("Imagen", [
     field("URL", textControl({
       value: image.src,
       placeholder: "https://...",
-      onChange: (value) => updateImageProps(controller, block, { src: value }),
+      onChange: (value) => updateImageProps(controller, { src: value }),
     })),
     field("Alt", textControl({
       value: image.alt,
       placeholder: "Descripción",
-      onChange: (value) => updateImageProps(controller, block, { alt: value }),
+      onChange: (value) => updateImageProps(controller, { alt: value }),
     })),
     field("Ajuste", selectControl({
       value: image.objectFit,
@@ -277,57 +257,54 @@ function renderImageProperties({ block, controller }) {
         { label: "Cubrir", value: "cover" },
         { label: "Estirar", value: "fill" },
       ],
-      onChange: (value) => updateImageProps(controller, block, { objectFit: value }),
+      onChange: (value) => updateImageProps(controller, { objectFit: value }),
     })),
   ]);
 }
 
 function renderIconProperties({ block, controller }) {
-  const icon = {
-    className: "fa-solid fa-star",
-    ...block.props.icon,
-  };
+  const icon = { className: "fa-solid fa-star", ...block.props.icon };
 
   return section("Ícono", [
     field("Clase", textControl({
       value: icon.className,
       placeholder: "fa-solid fa-star",
-      onChange: (value) => updateIconProps(controller, block, { className: value }),
+      onChange: (value) => updateIconProps(controller, { className: value }),
     })),
   ]);
 }
 
-function updateCommonStyle(controller, block, patch) {
-  controller.updateBlockProps(block.id, { style: patch });
+function updateCommonStyle(controller, patch) {
+  controller.updateSelectedBlockProps({ style: patch });
 }
 
-function updateTextStyle(controller, block, patch) {
-  controller.updateBlockProps(block.id, { textStyle: patch });
+function updateTextStyle(controller, patch) {
+  controller.updateSelectedBlockProps({ textStyle: patch });
 }
 
-function updateLineStyle(controller, block, patch) {
-  controller.updateBlockProps(block.id, { line: patch });
+function updateLineStyle(controller, patch) {
+  controller.updateSelectedBlockProps({ line: patch });
 }
 
-function updateRuledTextStyle(controller, block, patch) {
-  controller.updateBlockProps(block.id, { ruledText: patch });
+function updateRuledTextStyle(controller, patch) {
+  controller.updateSelectedBlockProps({ ruledText: patch });
 }
 
-function updateInternalGridStyle(controller, block, patch) {
-  controller.updateBlockProps(block.id, { internalGrid: patch });
+function updateInternalGridStyle(controller, patch) {
+  controller.updateSelectedBlockProps({ internalGrid: patch });
 }
 
-function updateGridColor(controller, block, color) {
-  controller.updateBlockProps(block.id, {
+function updateGridColor(controller, color) {
+  controller.updateSelectedBlockProps({
     style: { borderColor: color },
     internalGrid: { color },
   });
 }
 
-function updateImageProps(controller, block, patch) {
-  controller.updateBlockProps(block.id, { image: patch });
+function updateImageProps(controller, patch) {
+  controller.updateSelectedBlockProps({ image: patch });
 }
 
-function updateIconProps(controller, block, patch) {
-  controller.updateBlockProps(block.id, { icon: patch });
+function updateIconProps(controller, patch) {
+  controller.updateSelectedBlockProps({ icon: patch });
 }
