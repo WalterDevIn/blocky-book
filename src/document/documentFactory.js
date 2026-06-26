@@ -1,6 +1,6 @@
 import { getBlockDefinition } from "../blocks/blockRegistry.js";
-import { PAGE_SPEC, PRINT_DOCUMENT_VERSION, PRINT_INTENT } from "./printSpec.js";
 import { createId } from "../shared/createId.js";
+import { PAGE_SPEC, PRINT_DOCUMENT_VERSION, PRINT_INTENT } from "./printSpec.js";
 
 export function createPage() {
   return {
@@ -29,18 +29,21 @@ export function createBlock(type, overrides = {}) {
       ...definition.defaultFrame,
       ...overrides.frame,
     },
-    props: {
+    props: structuredClone({
       ...definition.defaultProps,
       ...overrides.props,
-    },
+    }),
   };
 }
 
-export function createPrintDocument() {
+export function createPrintDocument({ pageSpec = PAGE_SPEC } = {}) {
   return {
     version: PRINT_DOCUMENT_VERSION,
-    intent: PRINT_INTENT,
-    pageSpec: PAGE_SPEC,
+    intent: {
+      ...PRINT_INTENT,
+      snapUnitMm: pageSpec.gridMm,
+    },
+    pageSpec,
     spreads: [createSpread()],
   };
 }
