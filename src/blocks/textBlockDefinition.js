@@ -1,9 +1,10 @@
 import { BLOCK_TYPES } from "./blockTypes.js";
 
 export const TEXT_BLOCK_DEFAULT_PROPS = {
-  text: "Texto",
+  text: "",
   style: {
     backgroundColor: "#ffffff",
+    textColor: "#1f2328",
     fontFamily: "Arial",
     fontSizePt: 11,
     hasBorder: true,
