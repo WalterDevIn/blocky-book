@@ -1,4 +1,5 @@
 import { findBlockById } from "../document/documentQueries.js";
+import { getSelectedBlocks } from "../editor/selectionHelpers.js";
 import { el } from "../shared/dom.js";
 import { getBlockDisplayName, renderCommonProperties, renderSpecificProperties } from "./blockPropertySections.js";
 import { getFloatingMenuStyle } from "./floatingMenuPosition.js";
@@ -7,8 +8,19 @@ export function renderContextMenu({ editorState, controller }) {
   const menu = editorState.interaction.contextMenu;
   if (!menu) return null;
 
-  const found = findBlockById(editorState.document, menu.blockId);
-  if (!found) return null;
+  const selected = getSelectedBlocks(editorState);
+  const fallback = findBlockById(editorState.document, menu.blockId);
+  const targets = selected.length > 0 ? selected : fallback ? [fallback] : [];
+  if (targets.length === 0) return null;
+
+  const blocks = targets.map((target) => target.block);
+  const primaryBlock = blocks[0];
+  const sameType = blocks.every((block) => block.type === primaryBlock.type);
+  const title = blocks.length === 1
+    ? `Editar ${getBlockDisplayName(primaryBlock)}`
+    : sameType
+      ? `Editar ${blocks.length} ${getBlockDisplayName(primaryBlock)}`
+      : `Editar ${blocks.length} bloques`;
 
   return el("div", {
     className: "context-menu property-menu",
@@ -21,8 +33,8 @@ export function renderContextMenu({ editorState, controller }) {
       contextmenu: (event) => event.preventDefault(),
     },
   }, [
-    el("div", { className: "context-menu__title", textContent: `Editar ${getBlockDisplayName(found.block)}` }),
-    renderCommonProperties({ block: found.block, controller }),
-    renderSpecificProperties({ block: found.block, controller }),
+    el("div", { className: "context-menu__title", textContent: title }),
+    renderCommonProperties({ block: primaryBlock, controller }),
+    sameType ? renderSpecificProperties({ block: primaryBlock, controller }) : null,
   ]);
 }
