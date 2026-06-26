@@ -185,7 +185,7 @@ button:hover:not(:disabled) {
 }
 
 .block.is-selected {
-  border-color: var(--selected);
+  border-color: var(--selected) !important;
   outline: 1px solid var(--selected);
   outline-offset: 1px;
 }
@@ -264,7 +264,6 @@ button:hover:not(:disabled) {
 .block__content {
   width: 100%;
   height: 100%;
-  padding: 1mm;
   overflow: hidden;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -277,7 +276,6 @@ button:hover:not(:disabled) {
 
 .block__content--text {
   display: grid;
-  place-items: center;
 }
 
 .resize-handle {
@@ -302,11 +300,18 @@ button:hover:not(:disabled) {
   position: fixed;
   z-index: 40;
   min-width: 190px;
+  max-width: 320px;
+  max-height: min(620px, calc(100vh - 24px));
+  overflow: auto;
   padding: 6px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: white;
   box-shadow: 0 12px 32px rgba(18, 24, 31, 0.18);
+}
+
+.property-menu {
+  width: 300px;
 }
 
 .context-menu__title {
@@ -318,10 +323,71 @@ button:hover:not(:disabled) {
   letter-spacing: 0.04em;
 }
 
-.context-menu__section-title {
-  padding: 5px 9px 4px;
+.context-menu__section-title,
+.property-section__title {
+  padding: 9px 9px 5px;
   color: var(--muted);
   font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.property-section + .property-section {
+  margin-top: 4px;
+  border-top: 1px solid #eef0f3;
+}
+
+.property-field {
+  display: grid;
+  grid-template-columns: 1fr minmax(96px, 132px);
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px;
+  font-size: 13px;
+}
+
+.property-field__label {
+  color: var(--ink);
+}
+
+.property-control {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 7px;
+  background: white;
+}
+
+.property-control--color {
+  height: 30px;
+  padding: 2px;
+}
+
+.property-control--checkbox {
+  justify-self: start;
+  width: 18px;
+  height: 18px;
+}
+
+.property-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.property-toggle {
+  border-radius: 7px;
+  padding: 5px 7px;
+  font-size: 12px;
+  background: white;
+}
+
+.property-toggle.is-active {
+  color: var(--selected);
+  border-color: var(--selected);
+  background: #e9efff;
 }
 
 .context-menu__item {
