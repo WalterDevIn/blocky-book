@@ -9,6 +9,7 @@ import {
 } from "../document/documentCommands.js";
 import { findBlockById, getFirstPage } from "../document/documentQueries.js";
 
+const PICKUP_ANIMATION_MS = 150;
 const DROP_ANIMATION_MS = 180;
 
 export function createEditorController({ editorState, render }) {
@@ -50,6 +51,9 @@ export function createEditorController({ editorState, render }) {
       if (deleteBlock(editorState.document, blockId)) {
         editorState.selection = { blockId: null, pageId: null };
         editorState.interaction.editingBlockId = null;
+        editorState.interaction.pickingBlockId = null;
+        editorState.interaction.draggingBlockId = null;
+        editorState.interaction.droppingBlockId = null;
         editorState.interaction.contextMenu = null;
         render();
       }
@@ -88,13 +92,20 @@ export function createEditorController({ editorState, render }) {
       render();
     },
 
-    beginBlockDrag(blockId, pageId) {
+    beginBlockPickup(blockId, pageId) {
       editorState.selection = { blockId, pageId };
       editorState.interaction.mode = "dragging-block";
+      editorState.interaction.pickingBlockId = blockId;
       editorState.interaction.draggingBlockId = blockId;
       editorState.interaction.droppingBlockId = null;
       editorState.interaction.contextMenu = null;
       render();
+
+      window.setTimeout(() => {
+        if (editorState.interaction.pickingBlockId !== blockId) return;
+        editorState.interaction.pickingBlockId = null;
+        render();
+      }, PICKUP_ANIMATION_MS);
     },
 
     moveBlock(blockId, targetPageId, frame) {
@@ -110,6 +121,7 @@ export function createEditorController({ editorState, render }) {
 
     endBlockDrag(blockId) {
       editorState.interaction.mode = "idle";
+      editorState.interaction.pickingBlockId = null;
       editorState.interaction.draggingBlockId = null;
       editorState.interaction.droppingBlockId = blockId;
       render();
