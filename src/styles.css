@@ -270,12 +270,19 @@ button:hover:not(:disabled) {
   line-height: 1.15;
 }
 
-.block__content:focus {
+.block__content:focus,
+.block__text:focus {
   outline: none;
 }
 
 .block__content--text {
   display: flex;
+}
+
+.block__text {
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .resize-handle {
@@ -314,14 +321,14 @@ button:hover:not(:disabled) {
 }
 
 .context-menu__title {
-  padding: 5px 7px 4px;
+  padding: 6px 7px 5px;
   color: var(--muted);
   font-size: 11px;
   font-weight: 750;
-  line-height: 1;
+  line-height: 1.15;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .context-menu__section-title,
