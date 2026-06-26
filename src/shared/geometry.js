@@ -17,12 +17,15 @@ export function pointerToPageMm(event, pageElement, pageSpec = PAGE_SPEC) {
   };
 }
 
-export function constrainFrameToPage(frame, pageSpec = PAGE_SPEC) {
+export function constrainFrameToPage(frame, pageSpec = PAGE_SPEC, minSize = {}) {
+  const minWidth = minSize.widthMm ?? pageSpec.gridMm;
+  const minHeight = minSize.heightMm ?? pageSpec.gridMm;
+
   return {
     x: clamp(frame.x, 0, pageSpec.widthMm - frame.width),
     y: clamp(frame.y, 0, pageSpec.heightMm - frame.height),
-    width: clamp(frame.width, pageSpec.gridMm, pageSpec.widthMm - frame.x),
-    height: clamp(frame.height, pageSpec.gridMm, pageSpec.heightMm - frame.y),
+    width: clamp(frame.width, minWidth, pageSpec.widthMm - frame.x),
+    height: clamp(frame.height, minHeight, pageSpec.heightMm - frame.y),
   };
 }
 
