@@ -1,4 +1,4 @@
-import { BLOCK_TYPES } from "../blocks/blockTypes.js";
+import { listBlockDefinitions } from "../blocks/blockRegistry.js";
 import { hasSelection } from "../editor/editorSelectors.js";
 import { el, iconButton } from "../shared/dom.js";
 import { renderSettingsPanel } from "./renderSettingsPanel.js";
@@ -6,38 +6,7 @@ import { renderSettingsPanel } from "./renderSettingsPanel.js";
 export function renderToolbar({ editorState, controller }) {
   return el("header", { className: "toolbar" }, [
     el("div", { className: "toolbar__title", textContent: "Mini RPG Printer" }),
-    el("div", { className: "toolbar__group", title: "Agregar bloques" }, [
-      iconButton({
-        iconClass: "fa-solid fa-font",
-        label: "Agregar texto libre",
-        onClick: () => controller.addBlock(BLOCK_TYPES.text),
-      }),
-      iconButton({
-        iconClass: "fa-solid fa-minus",
-        label: "Agregar línea",
-        onClick: () => controller.addBlock(BLOCK_TYPES.line),
-      }),
-      iconButton({
-        iconClass: "fa-solid fa-align-left",
-        label: "Agregar texto normal",
-        onClick: () => controller.addBlock(BLOCK_TYPES.ruledText),
-      }),
-      iconButton({
-        iconClass: "fa-solid fa-border-all",
-        label: "Agregar bloque de cuadrícula",
-        onClick: () => controller.addBlock(BLOCK_TYPES.gridBlock),
-      }),
-      iconButton({
-        iconClass: "fa-regular fa-image",
-        label: "Agregar imagen",
-        onClick: () => controller.addBlock(BLOCK_TYPES.image),
-      }),
-      iconButton({
-        iconClass: "fa-solid fa-icons",
-        label: "Agregar ícono Font Awesome",
-        onClick: () => controller.addBlock(BLOCK_TYPES.icon),
-      }),
-    ]),
+    el("div", { className: "toolbar__group", title: "Agregar bloques" }, renderBlockButtons({ controller })),
     el("div", { className: "toolbar__group", title: "Página y visualización" }, [
       iconButton({
         iconClass: "fa-regular fa-clone",
@@ -72,4 +41,12 @@ export function renderToolbar({ editorState, controller }) {
       textContent: "Documento imprimible · Bloques en mm · Click derecho abre propiedades",
     }),
   ]);
+}
+
+function renderBlockButtons({ controller }) {
+  return listBlockDefinitions().map((definition) => iconButton({
+    iconClass: definition.iconClass,
+    label: `Agregar ${definition.label.toLowerCase()}`,
+    onClick: () => controller.addBlock(definition.type),
+  }));
 }
