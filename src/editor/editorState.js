@@ -1,6 +1,7 @@
 import { hydratePrintDocument } from "../document/documentHydration.js";
 import { loadStoredDocument } from "../document/documentStorage.js";
 import { loadEditorSettings } from "../settings/editorSettingsStorage.js";
+import { loadGlobalColors } from "../settings/globalColorsStorage.js";
 
 export function createEditorState() {
   const settings = loadEditorSettings();
@@ -8,6 +9,7 @@ export function createEditorState() {
   return {
     document: hydratePrintDocument(loadStoredDocument(), { pageSpec: settings.pageSpec }),
     settings,
+    globalColors: loadGlobalColors(),
     clipboard: {
       block: null,
     },
