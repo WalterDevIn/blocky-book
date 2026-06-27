@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-**Paso actual:** 6 — Completado. Próximo paso recomendado: 7 — Sacar handlers de página de `renderCanvas.js`.
+**Paso actual:** 7 — Completado. Plan base de refactor completado.
 
 **Regla de trabajo:** no avanzar al siguiente paso sin actualizar este archivo. Cada refactor debe mantener el estado actual, los archivos tocados y una nota breve de verificación.
 
@@ -192,17 +192,27 @@ src/editor/interaction/blockDragSession.js
 
 ### Paso 7 — Sacar handlers de página de `renderCanvas.js`
 
-**Estado:** pendiente.
+**Estado:** completado.
 
-**Motivo:** `renderCanvas.js` debería renderizar canvas/páginas, no decidir políticas de interacción como selección rectangular, limpiar selección o menú contextual.
+**Motivo:** `renderCanvas.js` decidía políticas de interacción como selección rectangular, limpiar selección y menú contextual.
 
-**Idea objetivo:**
+**Resultado:** se creó `src/editor/interaction/pagePointerHandlers.js`. `renderCanvas.js` ahora importa esos handlers y sólo los conecta a la página renderizada.
+
+**Archivos creados:**
 
 ```text
 src/editor/interaction/pagePointerHandlers.js
 ```
 
-**Criterio de finalización:** `renderCanvas.js` compone handlers importados, sin lógica directa de interacción.
+**Archivos modificados:**
+
+```text
+src/view/renderCanvas.js
+```
+
+**Criterio de finalización:** cumplido. `renderCanvas.js` compone handlers importados, sin lógica directa de interacción.
+
+**Verificación sugerida:** click en hoja vacía limpia selección, botón derecho arrastrado inicia selección rectangular, click derecho sobre bloque mantiene menú contextual de bloque.
 
 ---
 
@@ -280,4 +290,5 @@ src/
 - Paso 3 completado después del Paso 4: `editorController.js` quedó compuesto por acciones bajo `src/editor/actions/`.
 - Paso 5 completado: `blockRegistry.js` centraliza capabilities/constraints y la toolbar/render reducen hardcodeos por tipo.
 - Paso 6 completado: `blockDragSession.js` quedó como coordinador y delega intent/preview/drop/text edit.
-- Próximo paso recomendado: Paso 7 — sacar handlers de página de `renderCanvas.js`.
+- Paso 7 completado: `renderCanvas.js` delega interacción de página a `pagePointerHandlers.js`.
+- Plan base de refactor completado.
