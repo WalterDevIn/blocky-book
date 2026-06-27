@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-**Paso actual:** 2 — Completado. Próximo paso: 3 — Partir `editorController.js` en acciones.
+**Paso actual:** 4 — Completado. Pendiente retomable: Paso 3 — Partir `editorController.js` en acciones. Próximo paso recomendado si se sigue el orden pendiente: 3.
 
 **Regla de trabajo:** no avanzar al siguiente paso sin actualizar este archivo. Cada refactor debe mantener el estado actual, los archivos tocados y una nota breve de verificación.
 
@@ -100,25 +100,27 @@ src/editor/actions/
 
 ### Paso 4 — Mover constraints de bloque fuera de `documentCommands.js`
 
-**Estado:** pendiente.
+**Estado:** completado.
 
 **Motivo:** `documentCommands.js` no debería conocer casos particulares como que `line` tenga un mínimo especial.
 
-**Idea objetivo:**
+**Resultado:** se creó `src/blocks/blockConstraints.js` con `getMinimumFrameSize(block)`. `documentCommands.js` ahora usa ese helper y dejó de importar `BLOCK_TYPES` para resolver constraints.
+
+**Archivos creados:**
 
 ```text
 src/blocks/blockConstraints.js
 ```
 
-O incluir constraints en cada definición de bloque:
+**Archivos modificados:**
 
-```js
-constraints: {
-  minFrame: { widthMm: 5, heightMm: 0.5 }
-}
+```text
+src/document/documentCommands.js
 ```
 
-**Criterio de finalización:** `documentCommands.js` no importa `BLOCK_TYPES` sólo para constraints.
+**Criterio de finalización:** cumplido. `documentCommands.js` ya no importa `BLOCK_TYPES` sólo para constraints.
+
+**Verificación sugerida:** crear y redimensionar una línea; confirmar que conserva mínimo fino. Crear/redimensionar otros bloques y confirmar mínimos normales.
 
 ---
 
@@ -250,4 +252,5 @@ src/
 - No se inició el Paso 1.
 - Paso 1 completado: `blockPropertySections.js` se extrajo por secciones bajo `src/view/propertyPanel/`.
 - Paso 2 completado: se agregó `documentTransaction.js` y `editorController.js` centraliza autosave con `mutateDocument(...)`.
-- Próximo paso: Paso 3 — partir `editorController.js` en acciones.
+- Paso 4 completado por pedido explícito: se movieron constraints de bloque a `src/blocks/blockConstraints.js`.
+- Paso 3 sigue pendiente.
