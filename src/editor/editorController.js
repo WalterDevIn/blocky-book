@@ -1,6 +1,7 @@
 import { commitDocumentChange } from "../document/documentTransaction.js";
 import { createBlockActions } from "./actions/blockActions.js";
 import { createClipboardActions } from "./actions/clipboardActions.js";
+import { createGlobalColorActions } from "./actions/globalColorActions.js";
 import { createMenuActions } from "./actions/menuActions.js";
 import { createPageActions } from "./actions/pageActions.js";
 import { createSelectionActions } from "./actions/selectionActions.js";
@@ -28,6 +29,7 @@ export function createEditorController({ editorState, render }) {
     render,
     commitTextEdit: blockActions.commitTextEdit,
   });
+  const globalColorActions = createGlobalColorActions({ editorState, render });
 
   return {
     ...blockActions,
@@ -35,5 +37,6 @@ export function createEditorController({ editorState, render }) {
     ...clipboardActions,
     ...pageActions,
     ...menuActions,
+    ...globalColorActions,
   };
 }
