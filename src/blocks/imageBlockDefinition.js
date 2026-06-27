@@ -3,7 +3,7 @@ import { BLOCK_TYPES } from "./blockTypes.js";
 export const IMAGE_BLOCK_DEFAULT_PROPS = {
   style: {
     backgroundColor: "#f8fafc",
-    backgroundOpacity: 1,
+    backgroundOpacity: 0,
     textColor: "#64748b",
     textOpacity: 1,
     borderColor: "#8b96a5",
