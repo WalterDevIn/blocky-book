@@ -8,12 +8,24 @@ export function renderToolbar({ editorState, controller }) {
   return el("header", { className: "toolbar" }, [
     el("div", { className: "toolbar__title", textContent: "Mini RPG Printer" }),
     el("div", { className: "toolbar__group", title: "Agregar bloques" }, renderBlockButtons({ controller })),
-    el("div", { className: "toolbar__group", title: "Página y visualización" }, [
+    el("div", { className: "toolbar__group", title: "Páginas de cuadernillo" }, [
+      iconButton({
+        iconClass: "fa-solid fa-book-open-reader",
+        label: "Agregar página inicial derecha",
+        onClick: () => controller.addFirstSinglePage(),
+      }),
       iconButton({
         iconClass: "fa-regular fa-clone",
-        label: "Agregar par de hojas",
+        label: "Agregar par de páginas al final",
         onClick: () => controller.addSpread(),
       }),
+      iconButton({
+        iconClass: "fa-solid fa-book-bookmark",
+        label: "Agregar página final izquierda",
+        onClick: () => controller.addLastSinglePage(),
+      }),
+    ]),
+    el("div", { className: "toolbar__group", title: "Página y visualización" }, [
       iconButton({
         iconClass: "fa-solid fa-table-cells",
         label: editorState.viewport.showGrid ? "Ocultar grilla" : "Mostrar grilla",
@@ -40,7 +52,7 @@ export function renderToolbar({ editorState, controller }) {
     el("div", { className: "toolbar__spacer" }),
     el("div", {
       className: "hint",
-      textContent: "Documento imprimible · Bloques en mm · Click derecho abre propiedades",
+      textContent: "Cuadernillo imprimible · pares de carillas · Click derecho abre propiedades",
     }),
   ]);
 }
