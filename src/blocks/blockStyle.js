@@ -1,10 +1,13 @@
 export const DEFAULT_COMMON_STYLE = {
   backgroundColor: "#ffffff",
-  backgroundOpacity: 1,
+  backgroundOpacity: 0,
+  backgroundColorId: "",
   textColor: "#1f2328",
   textOpacity: 1,
+  textColorId: "",
   borderColor: "#8b96a5",
   borderOpacity: 1,
+  borderColorId: "",
   fontFamily: "Arial",
   fontSizePt: 11,
   hasBorder: true,
@@ -52,6 +55,9 @@ export function getCommonStyle(block) {
 
   return {
     ...nextStyle,
+    backgroundColorId: nextStyle.backgroundColorId ?? "",
+    textColorId: nextStyle.textColorId ?? "",
+    borderColorId: nextStyle.borderColorId ?? "",
     backgroundOpacity: clampNumber(nextStyle.backgroundOpacity, 0, 1, DEFAULT_COMMON_STYLE.backgroundOpacity),
     textOpacity: clampNumber(nextStyle.textOpacity, 0, 1, DEFAULT_COMMON_STYLE.textOpacity),
     borderOpacity: clampNumber(nextStyle.borderOpacity, 0, 1, DEFAULT_COMMON_STYLE.borderOpacity),
