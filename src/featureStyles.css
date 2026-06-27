@@ -115,6 +115,86 @@
   font-size: 12px;
 }
 
+.global-colors-panel {
+  position: relative;
+}
+
+.global-colors-panel__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 750;
+  list-style: none;
+}
+
+.global-colors-panel__summary::-webkit-details-marker,
+.color-picker__summary::-webkit-details-marker {
+  display: none;
+}
+
+.global-colors-panel__body {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 60;
+  width: 340px;
+  max-height: min(70vh, 520px);
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.42);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.22);
+}
+
+.global-colors-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.global-colors-panel__empty {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.global-color-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid #eef2f7;
+}
+
+.global-color-row__preview {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background-image:
+    linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+    linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+    linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+}
+
+.global-color-row__fields {
+  display: grid;
+  gap: 6px;
+}
+
 .property-menu {
   width: 300px;
   padding: 8px;
@@ -139,7 +219,7 @@
 }
 
 .property-section {
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid #e5e7eb;
   border-radius: 13px;
   background: #ffffff;
@@ -244,6 +324,110 @@
   color: #64748b;
   font-size: 12px;
   font-weight: 800;
+}
+
+.color-picker {
+  position: relative;
+}
+
+.color-picker__summary {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 12px;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 3px 6px;
+  border: 1px solid #d8dee8;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  list-style: none;
+}
+
+.color-picker__swatch {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background-image:
+    linear-gradient(45deg, #e2e8f0 25%, transparent 25%),
+    linear-gradient(-45deg, #e2e8f0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e2e8f0 75%),
+    linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+}
+
+.color-picker__summary-text,
+.color-picker__choice-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.color-picker__chevron {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.color-picker__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 70;
+  width: 250px;
+  padding: 9px;
+  border: 1px solid rgba(148, 163, 184, 0.48);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.22);
+}
+
+.color-picker__title,
+.color-picker__subtitle {
+  color: #475569;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.color-picker__choices {
+  display: grid;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.color-picker__choice {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 4px 6px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.color-picker__choice.is-active {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.color-picker__separator {
+  height: 1px;
+  margin: 9px 0;
+  background: #e2e8f0;
+}
+
+.color-picker__local {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 58px;
+  gap: 6px;
+  margin-top: 7px;
 }
 
 .property-control--checkbox {
