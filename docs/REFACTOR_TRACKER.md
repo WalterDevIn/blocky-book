@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-**Paso actual:** 4 — Completado. Pendiente retomable: Paso 3 — Partir `editorController.js` en acciones. Próximo paso recomendado si se sigue el orden pendiente: 3.
+**Paso actual:** 4 — Completado. También completado después: Paso 3 — Partir `editorController.js` en acciones. Próximo paso recomendado: 5 — Convertir `blockRegistry` en registro rico.
 
 **Regla de trabajo:** no avanzar al siguiente paso sin actualizar este archivo. Cada refactor debe mantener el estado actual, los archivos tocados y una nota breve de verificación.
 
@@ -77,24 +77,31 @@ src/editor/editorController.js
 
 ### Paso 3 — Partir `editorController.js` en acciones
 
-**Estado:** pendiente.
+**Estado:** completado.
 
-**Motivo:** el controller coordina demasiadas responsabilidades: selección, clipboard, bloques, páginas, menú contextual, settings, persistencia y render.
+**Motivo:** el controller coordinaba demasiadas responsabilidades: selección, clipboard, bloques, páginas, menú contextual, settings, persistencia y render.
 
-**Idea objetivo:**
+**Resultado:** se creó `src/editor/actions/` y `editorController.js` quedó como fachada/composición de acciones.
+
+**Archivos creados:**
 
 ```text
-src/editor/actions/
-  blockActions.js
-  selectionActions.js
-  clipboardActions.js
-  pageActions.js
-  menuActions.js
+src/editor/actions/blockActions.js
+src/editor/actions/selectionActions.js
+src/editor/actions/clipboardActions.js
+src/editor/actions/pageActions.js
+src/editor/actions/menuActions.js
 ```
 
-`createEditorController` debería quedar como fachada/composición.
+**Archivos modificados:**
 
-**Criterio de finalización:** `editorController.js` queda pequeño y delega en módulos por responsabilidad.
+```text
+src/editor/editorController.js
+```
+
+**Criterio de finalización:** cumplido. `editorController.js` delega en módulos por responsabilidad y conserva la API pública del controller.
+
+**Verificación sugerida:** probar selección, edición de texto, crear/borrar bloques, copiar/pegar, mover/redimensionar, cambiar tamaño de página, abrir/cerrar menú contextual y alternar grilla/margen.
 
 ---
 
@@ -253,4 +260,5 @@ src/
 - Paso 1 completado: `blockPropertySections.js` se extrajo por secciones bajo `src/view/propertyPanel/`.
 - Paso 2 completado: se agregó `documentTransaction.js` y `editorController.js` centraliza autosave con `mutateDocument(...)`.
 - Paso 4 completado por pedido explícito: se movieron constraints de bloque a `src/blocks/blockConstraints.js`.
-- Paso 3 sigue pendiente.
+- Paso 3 completado después del Paso 4: `editorController.js` quedó compuesto por acciones bajo `src/editor/actions/`.
+- Próximo paso recomendado: Paso 5 — convertir `blockRegistry` en registro rico.
