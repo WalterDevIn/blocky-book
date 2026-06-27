@@ -4,6 +4,7 @@ export function gridBackgroundToCss(gridStyle) {
   return {
     backgroundImage: `linear-gradient(to right, ${rgba} 1px, transparent 1px), linear-gradient(to bottom, ${rgba} 1px, transparent 1px)`,
     backgroundSize: `${gridStyle.sizeMm}mm ${gridStyle.sizeMm}mm`,
+    backgroundPosition: "-1px -1px",
   };
 }
 
