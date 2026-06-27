@@ -1,6 +1,7 @@
 import { listBlockDefinitions } from "../blocks/blockRegistry.js";
 import { hasSelection } from "../editor/editorSelectors.js";
 import { el, iconButton } from "../shared/dom.js";
+import { renderGlobalColorsPanel } from "./renderGlobalColorsPanel.js";
 import { renderSettingsPanel } from "./renderSettingsPanel.js";
 
 export function renderToolbar({ editorState, controller }) {
@@ -34,6 +35,7 @@ export function renderToolbar({ editorState, controller }) {
         onClick: () => controller.deleteSelectedBlock(),
       }),
     ]),
+    renderGlobalColorsPanel({ editorState, controller }),
     renderSettingsPanel({ editorState, controller }),
     el("div", { className: "toolbar__spacer" }),
     el("div", {
