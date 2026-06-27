@@ -1,3 +1,4 @@
+import { getBlockDefinition } from "../blocks/blockRegistry.js";
 import { handleBlockPointerDown, handleResizePointerDown } from "../editor/blockInteraction.js";
 import { isEditingBlock, isSelectedBlock } from "../editor/editorSelectors.js";
 import { readEditedText } from "../editor/textEditing.js";
@@ -8,6 +9,7 @@ import { commonStyleToCss } from "./blockStyleCss.js";
 export function createBlockElement({ block, page, pageElement, editorState, controller, commonStyle, children = [], style = {} }) {
   const isSelected = isSelectedBlock(editorState, block.id);
   const isEditing = isEditingBlock(editorState, block.id);
+  const canResize = getBlockDefinition(block.type).capabilities.canResize !== false;
 
   const blockElement = el("article", {
     className: getBlockClassName({ block, editorState, isSelected, isEditing }),
@@ -30,7 +32,7 @@ export function createBlockElement({ block, page, pageElement, editorState, cont
     },
   }, children);
 
-  if (isSelected && !isEditing) {
+  if (isSelected && !isEditing && canResize) {
     blockElement.appendChild(el("button", {
       className: "resize-handle",
       type: "button",
