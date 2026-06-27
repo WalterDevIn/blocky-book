@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-**Paso actual:** 1 — Completado. Próximo paso: 2 — Extraer transacción/autosave del controller.
+**Paso actual:** 2 — Completado. Próximo paso: 3 — Partir `editorController.js` en acciones.
 
 **Regla de trabajo:** no avanzar al siguiente paso sin actualizar este archivo. Cada refactor debe mantener el estado actual, los archivos tocados y una nota breve de verificación.
 
@@ -51,23 +51,27 @@ src/view/blockPropertySections.js
 
 ### Paso 2 — Extraer transacción/autosave del controller
 
-**Estado:** pendiente.
+**Estado:** completado.
 
-**Motivo:** cada mutación del documento debería pasar por un wrapper único. Hoy el autosave queda repetido manualmente después de muchas operaciones.
+**Motivo:** cada mutación del documento debería pasar por un wrapper único. Antes el autosave quedaba repetido manualmente después de muchas operaciones.
 
-**Idea objetivo:**
+**Resultado:** se agregó `src/document/documentTransaction.js` con `commitDocumentChange(editorState, mutation)`. `editorController.js` ahora usa `mutateDocument(...)` para centralizar mutación + autosave y dejó de importar `saveStoredDocument` directamente.
+
+**Archivos creados:**
 
 ```text
 src/document/documentTransaction.js
 ```
 
-Con una función similar a:
+**Archivos modificados:**
 
-```js
-commitDocumentChange(editorState, render, mutation)
+```text
+src/editor/editorController.js
 ```
 
-**Criterio de finalización:** las mutaciones del documento guardan automáticamente sin repetir `saveDocument()` en cada acción.
+**Criterio de finalización:** cumplido. Las mutaciones del documento relevantes pasan por un wrapper único de transacción/autosave dentro del controller.
+
+**Verificación sugerida:** crear, pegar, mover, redimensionar, borrar y editar propiedades; recargar la página y confirmar persistencia.
 
 ---
 
@@ -245,4 +249,5 @@ src/
 - Plan registrado en `docs/REFACTOR_TRACKER.md`.
 - No se inició el Paso 1.
 - Paso 1 completado: `blockPropertySections.js` se extrajo por secciones bajo `src/view/propertyPanel/`.
-- Próximo paso: Paso 2 — extraer transacción/autosave del controller.
+- Paso 2 completado: se agregó `documentTransaction.js` y `editorController.js` centraliza autosave con `mutateDocument(...)`.
+- Próximo paso: Paso 3 — partir `editorController.js` en acciones.
