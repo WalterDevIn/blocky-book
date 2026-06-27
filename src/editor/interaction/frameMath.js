@@ -1,3 +1,4 @@
+import { getCommonStyle } from "../../blocks/blockStyle.js";
 import { BLOCK_TYPES } from "../../blocks/blockTypes.js";
 import { PAGE_SPEC } from "../../document/printSpec.js";
 import { clamp, pointerToPageMm, snapMm } from "../../shared/geometry.js";
@@ -52,11 +53,13 @@ export function setBlockElementFrame(element, frame) {
 }
 
 function getBlockMoveSnapMm(block) {
+  if (getCommonStyle(block).useFineSnap) return PAGE_SPEC.gridMm / 2;
   if (block.type === BLOCK_TYPES.line) return PAGE_SPEC.gridMm / 2;
   return PAGE_SPEC.gridMm;
 }
 
 function getBlockResizeSnapMm(block) {
+  if (getCommonStyle(block).useFineSnap) return PAGE_SPEC.gridMm / 2;
   if (block.type === BLOCK_TYPES.line) return PAGE_SPEC.gridMm / 2;
   return PAGE_SPEC.gridMm;
 }
