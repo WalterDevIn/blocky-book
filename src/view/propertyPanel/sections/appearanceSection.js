@@ -1,23 +1,18 @@
 import { getCommonStyle } from "../../../blocks/blockStyle.js";
 import {
-  buttonGroup,
   checkboxControl,
-  colorOpacityControl,
   field,
   numberControl,
   section,
-  selectControl,
-  textControl,
-  toggleButton,
 } from "../../propertyControls.js";
+import { colorReferenceControl } from "../colorReferenceControl.js";
 import { updateCommonStyle } from "../propertyBindings.js";
 
 export function renderAppearanceSection({ block, editorState, controller }) {
   const style = getCommonStyle(block);
 
   return section("Apariencia", [
-    renderGlobalColorManager({ editorState, controller }),
-    renderColorSlot({
+    field("Fondo", colorReferenceControl({
       label: "Fondo",
       globalColors: editorState.globalColors,
       colorId: style.backgroundColorId,
@@ -26,8 +21,8 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onGlobalChange: (value) => updateCommonStyle(controller, { backgroundColorId: value }),
       onColorChange: (value) => updateCommonStyle(controller, { backgroundColor: value, backgroundColorId: "" }),
       onOpacityChange: (value) => updateCommonStyle(controller, { backgroundOpacity: value, backgroundColorId: "" }),
-    }),
-    renderColorSlot({
+    }), { className: "property-field--color" }),
+    field("Texto", colorReferenceControl({
       label: "Texto",
       globalColors: editorState.globalColors,
       colorId: style.textColorId,
@@ -36,8 +31,8 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onGlobalChange: (value) => updateCommonStyle(controller, { textColorId: value }),
       onColorChange: (value) => updateCommonStyle(controller, { textColor: value, textColorId: "" }),
       onOpacityChange: (value) => updateCommonStyle(controller, { textOpacity: value, textColorId: "" }),
-    }),
-    renderColorSlot({
+    }), { className: "property-field--color" }),
+    field("Borde", colorReferenceControl({
       label: "Borde",
       globalColors: editorState.globalColors,
       colorId: style.borderColorId,
@@ -46,7 +41,7 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onGlobalChange: (value) => updateCommonStyle(controller, { borderColorId: value }),
       onColorChange: (value) => updateCommonStyle(controller, { borderColor: value, borderColorId: "" }),
       onOpacityChange: (value) => updateCommonStyle(controller, { borderOpacity: value, borderColorId: "" }),
-    }),
+    }), { className: "property-field--color" }),
     field("Borde visible", checkboxControl({
       checked: style.hasBorder,
       onChange: (value) => updateCommonStyle(controller, { hasBorder: value }),
@@ -65,66 +60,5 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       step: 1,
       onChange: (value) => updateCommonStyle(controller, { layer: value }),
     })),
-  ]);
-}
-
-function renderColorSlot({ label, globalColors, colorId, color, opacity, onGlobalChange, onColorChange, onOpacityChange }) {
-  return [
-    field(`${label} global`, selectControl({
-      value: colorId || "",
-      options: [
-        { value: "", label: "Local" },
-        ...globalColors.map((globalColor) => ({
-          value: globalColor.id,
-          label: `${globalColor.name} (${globalColor.hex}, α ${globalColor.opacity})`,
-        })),
-      ],
-      onChange: onGlobalChange,
-    })),
-    field(label, colorOpacityControl({
-      color,
-      opacity,
-      onColorChange,
-      onOpacityChange,
-    }), { className: "property-field--color" }),
-  ];
-}
-
-function renderGlobalColorManager({ editorState, controller }) {
-  return section("Colores globales", [
-    buttonGroup([
-      toggleButton({
-        label: "+ Color",
-        title: "Crear color global",
-        active: false,
-        onClick: () => controller.addGlobalColor(),
-      }),
-    ]),
-    ...editorState.globalColors.flatMap((color) => [
-      field("Nombre", textControl({
-        value: color.name,
-        placeholder: "Nombre",
-        onChange: (value) => controller.updateGlobalColor(color.id, { name: value }),
-      })),
-      field("Código hex", textControl({
-        value: color.hex,
-        placeholder: "#2563eb",
-        onChange: (value) => controller.updateGlobalColor(color.id, { hex: value }),
-      })),
-      field("Color/α", colorOpacityControl({
-        color: color.hex,
-        opacity: color.opacity,
-        onColorChange: (value) => controller.updateGlobalColor(color.id, { hex: value }),
-        onOpacityChange: (value) => controller.updateGlobalColor(color.id, { opacity: value }),
-      }), { className: "property-field--color" }),
-      field("Eliminar", buttonGroup([
-        toggleButton({
-          label: "Borrar",
-          title: "Eliminar color global",
-          active: false,
-          onClick: () => controller.deleteGlobalColor(color.id),
-        }),
-      ])),
-    ]),
   ]);
 }
