@@ -1,7 +1,10 @@
 export const DEFAULT_COMMON_STYLE = {
   backgroundColor: "#ffffff",
+  backgroundOpacity: 1,
   textColor: "#1f2328",
+  textOpacity: 1,
   borderColor: "#8b96a5",
+  borderOpacity: 1,
   fontFamily: "Arial",
   fontSizePt: 11,
   hasBorder: true,
@@ -40,11 +43,18 @@ export const DEFAULT_INTERNAL_GRID_STYLE = {
 };
 
 export function getCommonStyle(block) {
-  return {
+  const nextStyle = {
     ...DEFAULT_COMMON_STYLE,
     fontFamily: block.props.fontFamily ?? DEFAULT_COMMON_STYLE.fontFamily,
     fontSizePt: block.props.fontSizePt ?? DEFAULT_COMMON_STYLE.fontSizePt,
     ...block.props.style,
+  };
+
+  return {
+    ...nextStyle,
+    backgroundOpacity: clampNumber(nextStyle.backgroundOpacity, 0, 1),
+    textOpacity: clampNumber(nextStyle.textOpacity, 0, 1),
+    borderOpacity: clampNumber(nextStyle.borderOpacity, 0, 1),
   };
 }
 
