@@ -7,7 +7,7 @@ export function createGroupDragPreview({ pageElement, blockIds, sourceBlockId })
 
       const ghost = element.cloneNode(true);
       ghost.classList.remove("is-selected", "is-editing", "is-dropping");
-      ghost.classList.add("drag-ghost", "is-dragging", "is-group-drag-ghost");
+      ghost.classList.add("is-group-drag-ghost");
       ghost.style.left = element.style.left;
       ghost.style.top = element.style.top;
       ghost.style.width = element.style.width;
