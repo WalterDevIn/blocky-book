@@ -2,6 +2,7 @@ import { BLOCK_TYPES } from "../../blocks/blockTypes.js";
 import {
   addBlockToPage,
   deleteBlocks,
+  moveBlocksToPage,
   moveBlockToPage,
   translateBlocks,
   updateBlockFrame as updateDocumentBlockFrame,
@@ -81,8 +82,14 @@ export function createBlockActions({ editorState, render, mutateDocument }) {
           x: frame.x - found.block.frame.x,
           y: frame.y - found.block.frame.y,
         };
-        mutateDocument((documentModel) => translateBlocks(documentModel, selectedIds, delta));
-        editorState.selection = createSelection(selectedIds, found.page.id);
+        mutateDocument((documentModel) => {
+          if (found.page.id !== targetPageId) {
+            moveBlocksToPage(documentModel, selectedIds, targetPageId);
+          }
+
+          translateBlocks(documentModel, selectedIds, delta);
+        });
+        editorState.selection = createSelection(selectedIds, targetPageId);
       } else {
         const movedBlock = mutateDocument((documentModel) => {
           const nextBlock = moveBlockToPage(documentModel, blockId, targetPageId);
