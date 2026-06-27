@@ -19,6 +19,7 @@ export function commonStyleToCss(commonStyle, globalColors = []) {
     fallbackOpacity: commonStyle.borderOpacity,
     globalColors,
   });
+  const radius = commonStyle.borderRadiusMm;
 
   return {
     zIndex: String(commonStyle.layer),
@@ -26,7 +27,14 @@ export function commonStyleToCss(commonStyle, globalColors = []) {
     backgroundColor: colorWithOpacity(background.hex, background.opacity),
     borderColor: colorWithOpacity(border.hex, border.opacity),
     borderStyle: commonStyle.hasBorder ? "solid" : "none",
-    borderRadius: `${commonStyle.borderRadiusMm}mm`,
+    borderTopWidth: `${commonStyle.borderTopWidthMm}mm`,
+    borderRightWidth: `${commonStyle.borderRightWidthMm}mm`,
+    borderBottomWidth: `${commonStyle.borderBottomWidthMm}mm`,
+    borderLeftWidth: `${commonStyle.borderLeftWidthMm}mm`,
+    borderTopLeftRadius: `${commonStyle.borderTopLeftRadiusMm ?? radius}mm`,
+    borderTopRightRadius: `${commonStyle.borderTopRightRadiusMm ?? radius}mm`,
+    borderBottomRightRadius: `${commonStyle.borderBottomRightRadiusMm ?? radius}mm`,
+    borderBottomLeftRadius: `${commonStyle.borderBottomLeftRadiusMm ?? radius}mm`,
     fontFamily: commonStyle.fontFamily,
     fontSize: `${commonStyle.fontSizePt}pt`,
     fontWeight: commonStyle.bold ? "700" : "400",
