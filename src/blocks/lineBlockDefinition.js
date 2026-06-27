@@ -2,8 +2,10 @@ import { BLOCK_TYPES } from "./blockTypes.js";
 
 export const LINE_BLOCK_DEFAULT_PROPS = {
   style: {
-    backgroundColor: "#111827",
+    backgroundColor: "#ffffff",
+    backgroundOpacity: 0,
     textColor: "#111827",
+    textOpacity: 1,
     fontFamily: "Arial",
     fontSizePt: 11,
     hasBorder: false,
@@ -14,20 +16,22 @@ export const LINE_BLOCK_DEFAULT_PROPS = {
     strike: false,
   },
   line: {
-    angleDeg: 0,
+    start: { x: 0, y: 1 },
+    end: { x: 40, y: 1 },
     thicknessMm: 0.75,
+    useMillimeterSnap: false,
   },
 };
 
 export const LINE_BLOCK_DEFINITION = {
   type: BLOCK_TYPES.line,
   label: "Línea",
-  iconClass: "fa-solid fa-minus",
+  iconClass: "fa-solid fa-slash",
   defaultFrame: {
     x: 10,
     y: 10,
     width: 40,
-    height: 1,
+    height: 2,
   },
   defaultProps: LINE_BLOCK_DEFAULT_PROPS,
 };
