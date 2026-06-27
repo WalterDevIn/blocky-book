@@ -9,9 +9,10 @@ import { BLOCK_TYPES } from "../blocks/blockTypes.js";
 import {
   buttonGroup,
   checkboxControl,
-  colorControl,
+  colorOpacityControl,
   field,
   numberControl,
+  opacityControl,
   section,
   selectControl,
   textControl,
@@ -54,44 +55,26 @@ export function getBlockDisplayName(block) {
 export function renderCommonProperties({ block, controller }) {
   const style = getCommonStyle(block);
 
-  return section("Bloque", [
-    field("Fondo", colorControl({
-      value: style.backgroundColor,
-      onChange: (value) => updateCommonStyle(controller, { backgroundColor: value }),
-    })),
-    field("Opacidad fondo", opacityControl({
-      value: style.backgroundOpacity,
-      onChange: (value) => updateCommonStyle(controller, { backgroundOpacity: value }),
-    })),
-    field("Texto", colorControl({
-      value: style.textColor,
-      onChange: (value) => updateCommonStyle(controller, { textColor: value }),
-    })),
-    field("Opacidad texto", opacityControl({
-      value: style.textOpacity,
-      onChange: (value) => updateCommonStyle(controller, { textOpacity: value }),
-    })),
-    field("Borde color", colorControl({
-      value: style.borderColor ?? style.textColor,
-      onChange: (value) => updateCommonStyle(controller, { borderColor: value }),
-    })),
-    field("Opacidad borde", opacityControl({
-      value: style.borderOpacity,
-      onChange: (value) => updateCommonStyle(controller, { borderOpacity: value }),
-    })),
-    field("Fuente", selectControl({
-      value: style.fontFamily,
-      options: FONT_OPTIONS,
-      onChange: (value) => updateCommonStyle(controller, { fontFamily: value }),
-    })),
-    field("Tamaño", numberControl({
-      value: style.fontSizePt,
-      min: 6,
-      max: 72,
-      step: 1,
-      onChange: (value) => updateCommonStyle(controller, { fontSizePt: value }),
-    })),
-    field("Borde", checkboxControl({
+  return section("Apariencia", [
+    field("Fondo", colorOpacityControl({
+      color: style.backgroundColor,
+      opacity: style.backgroundOpacity,
+      onColorChange: (value) => updateCommonStyle(controller, { backgroundColor: value }),
+      onOpacityChange: (value) => updateCommonStyle(controller, { backgroundOpacity: value }),
+    }), { className: "property-field--color" }),
+    field("Texto", colorOpacityControl({
+      color: style.textColor,
+      opacity: style.textOpacity,
+      onColorChange: (value) => updateCommonStyle(controller, { textColor: value }),
+      onOpacityChange: (value) => updateCommonStyle(controller, { textOpacity: value }),
+    }), { className: "property-field--color" }),
+    field("Borde", colorOpacityControl({
+      color: style.borderColor ?? style.textColor,
+      opacity: style.borderOpacity,
+      onColorChange: (value) => updateCommonStyle(controller, { borderColor: value }),
+      onOpacityChange: (value) => updateCommonStyle(controller, { borderOpacity: value }),
+    }), { className: "property-field--color" }),
+    field("Borde visible", checkboxControl({
       checked: style.hasBorder,
       onChange: (value) => updateCommonStyle(controller, { hasBorder: value }),
     })),
@@ -108,6 +91,25 @@ export function renderCommonProperties({ block, controller }) {
       max: 999,
       step: 1,
       onChange: (value) => updateCommonStyle(controller, { layer: value }),
+    })),
+  ]);
+}
+
+export function renderTypographyProperties({ block, controller }) {
+  const style = getCommonStyle(block);
+
+  return section("Tipografía", [
+    field("Fuente", selectControl({
+      value: style.fontFamily,
+      options: FONT_OPTIONS,
+      onChange: (value) => updateCommonStyle(controller, { fontFamily: value }),
+    })),
+    field("Tamaño", numberControl({
+      value: style.fontSizePt,
+      min: 6,
+      max: 72,
+      step: 1,
+      onChange: (value) => updateCommonStyle(controller, { fontSizePt: value }),
     })),
     field("Estilo", buttonGroup([
       toggleButton({
@@ -216,14 +218,12 @@ function renderRuledTextProperties({ block, controller }) {
       checked: ruledTextStyle.showLines,
       onChange: (value) => updateRuledTextStyle(controller, { showLines: value }),
     })),
-    field("Color líneas", colorControl({
-      value: ruledTextStyle.lineColor,
-      onChange: (value) => updateRuledTextStyle(controller, { lineColor: value }),
-    })),
-    field("Opacidad líneas", opacityControl({
-      value: ruledTextStyle.lineOpacity,
-      onChange: (value) => updateRuledTextStyle(controller, { lineOpacity: value }),
-    })),
+    field("Líneas", colorOpacityControl({
+      color: ruledTextStyle.lineColor,
+      opacity: ruledTextStyle.lineOpacity,
+      onColorChange: (value) => updateRuledTextStyle(controller, { lineColor: value }),
+      onOpacityChange: (value) => updateRuledTextStyle(controller, { lineOpacity: value }),
+    }), { className: "property-field--color" }),
   ]);
 }
 
@@ -231,14 +231,12 @@ function renderInternalGridProperties({ block, controller }) {
   const gridStyle = getInternalGridStyle(block);
 
   return section("Cuadrícula interna", [
-    field("Color", colorControl({
-      value: gridStyle.color,
-      onChange: (value) => updateGridColor(controller, value),
-    })),
-    field("Opacidad", opacityControl({
-      value: gridStyle.opacity,
-      onChange: (value) => updateInternalGridStyle(controller, { opacity: value }),
-    })),
+    field("Cuadrícula", colorOpacityControl({
+      color: gridStyle.color,
+      opacity: gridStyle.opacity,
+      onColorChange: (value) => updateGridColor(controller, value),
+      onOpacityChange: (value) => updateInternalGridStyle(controller, { opacity: value }),
+    }), { className: "property-field--color" }),
   ]);
 }
 
@@ -294,16 +292,6 @@ function renderIconProperties({ block, controller }) {
       onChange: (value) => updateIconProps(controller, { className: value }),
     })),
   ]);
-}
-
-function opacityControl({ value, onChange }) {
-  return numberControl({
-    value,
-    min: 0,
-    max: 1,
-    step: 0.05,
-    onChange,
-  });
 }
 
 function updateCommonStyle(controller, patch) {
