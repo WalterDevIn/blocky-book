@@ -3,30 +3,29 @@ import { pointerToPageMm, safeReleasePointerCapture } from "../../shared/geometr
 const MIN_MARQUEE_SIZE_MM = 1;
 
 export function startMarqueeSelectionSession({ event, page, pageElement, editorState, controller }) {
-  if (event.button !== 2) return false;
+  if (event.button !== 0 && event.button !== 2) return false;
 
   event.preventDefault();
   event.stopPropagation();
 
-  const start = pointerToPageMm(event, pageElement);
+  const start = pointerToPageMm(event, pageElement, editorState.document.pageSpec);
   const marqueeElement = createMarqueeElement(pageElement);
-  let latest = start;
+  let latestSelectedIds = [];
   let hasMoved = false;
 
   pageElement.setPointerCapture?.(event.pointerId);
 
   const move = (moveEvent) => {
-    latest = pointerToPageMm(moveEvent, pageElement);
+    const latest = pointerToPageMm(moveEvent, pageElement, editorState.document.pageSpec);
     const rect = getSelectionRect(start, latest);
     hasMoved = rect.width >= MIN_MARQUEE_SIZE_MM || rect.height >= MIN_MARQUEE_SIZE_MM;
 
     setMarqueeFrame(marqueeElement, rect);
 
-    const blockIds = page.blocks
-      .filter((block) => framesIntersect(block.frame, rect))
-      .map((block) => block.id);
-
-    controller.selectBlocks(blockIds, page.id);
+    latestSelectedIds = hasMoved
+      ? getIntersectingBlockIds(page.blocks, rect)
+      : [];
+    paintLiveSelection(pageElement, latestSelectedIds);
   };
 
   const up = (upEvent) => {
@@ -35,12 +34,13 @@ export function startMarqueeSelectionSession({ event, page, pageElement, editorS
     window.removeEventListener("pointerup", up);
     marqueeElement.remove();
 
-    if (hasMoved) {
-      controller.openSelectionContextMenu(upEvent.clientX, upEvent.clientY);
+    if (!hasMoved) {
+      clearLiveSelection(pageElement);
+      controller.clearSelection();
       return;
     }
 
-    controller.openSelectionContextMenu(upEvent.clientX, upEvent.clientY);
+    controller.selectBlocks(latestSelectedIds, page.id);
   };
 
   window.addEventListener("pointermove", move);
@@ -74,9 +74,29 @@ function getSelectionRect(start, end) {
   };
 }
 
+function getIntersectingBlockIds(blocks, rect) {
+  return blocks
+    .filter((block) => framesIntersect(block.frame, rect))
+    .map((block) => block.id);
+}
+
 function framesIntersect(frame, rect) {
   return frame.x < rect.x + rect.width
     && frame.x + frame.width > rect.x
     && frame.y < rect.y + rect.height
     && frame.y + frame.height > rect.y;
+}
+
+function paintLiveSelection(pageElement, blockIds) {
+  const selectedIds = new Set(blockIds);
+
+  pageElement.querySelectorAll(".block[data-block-id]").forEach((blockElement) => {
+    blockElement.classList.toggle("is-selected", selectedIds.has(blockElement.dataset.blockId));
+  });
+}
+
+function clearLiveSelection(pageElement) {
+  pageElement.querySelectorAll(".block[data-block-id]").forEach((blockElement) => {
+    blockElement.classList.remove("is-selected");
+  });
 }
