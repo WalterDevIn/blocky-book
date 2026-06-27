@@ -52,9 +52,9 @@ export function getCommonStyle(block) {
 
   return {
     ...nextStyle,
-    backgroundOpacity: clampNumber(nextStyle.backgroundOpacity, 0, 1),
-    textOpacity: clampNumber(nextStyle.textOpacity, 0, 1),
-    borderOpacity: clampNumber(nextStyle.borderOpacity, 0, 1),
+    backgroundOpacity: clampNumber(nextStyle.backgroundOpacity, 0, 1, DEFAULT_COMMON_STYLE.backgroundOpacity),
+    textOpacity: clampNumber(nextStyle.textOpacity, 0, 1, DEFAULT_COMMON_STYLE.textOpacity),
+    borderOpacity: clampNumber(nextStyle.borderOpacity, 0, 1, DEFAULT_COMMON_STYLE.borderOpacity),
   };
 }
 
@@ -94,7 +94,7 @@ export function getRuledTextStyle(block) {
     paddingMm: normalizePaddingMm(nextStyle, DEFAULT_RULED_TEXT_STYLE.paddingMm),
     lineHeightMm: 5,
     showLines: nextStyle.showLines !== false,
-    lineOpacity: clampNumber(nextStyle.lineOpacity, 0, 1),
+    lineOpacity: clampNumber(nextStyle.lineOpacity, 0, 1, DEFAULT_RULED_TEXT_STYLE.lineOpacity),
   };
 }
 
@@ -106,7 +106,7 @@ export function getInternalGridStyle(block) {
 
   return {
     ...nextStyle,
-    opacity: clampNumber(nextStyle.opacity, 0, 1),
+    opacity: clampNumber(nextStyle.opacity, 0, 1, DEFAULT_INTERNAL_GRID_STYLE.opacity),
     sizeMm: 5,
   };
 }
@@ -130,7 +130,7 @@ function normalizePaddingMm(textStyle, defaultValue) {
   return defaultValue;
 }
 
-function clampNumber(value, min, max) {
-  if (typeof value !== "number") return min;
+function clampNumber(value, min, max, fallback = min) {
+  if (typeof value !== "number") return fallback;
   return Math.min(Math.max(value, min), max);
 }
