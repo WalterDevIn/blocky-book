@@ -2,7 +2,7 @@
 
 ## Estado actual
 
-**Paso actual:** 0 — Plan registrado. Refactor no iniciado.
+**Paso actual:** 1 — Completado. Próximo paso: 2 — Extraer transacción/autosave del controller.
 
 **Regla de trabajo:** no avanzar al siguiente paso sin actualizar este archivo. Cada refactor debe mantener el estado actual, los archivos tocados y una nota breve de verificación.
 
@@ -14,28 +14,38 @@ Reducir responsabilidades mal distribuidas y archivos dios sin romper la app. El
 
 ### Paso 1 — Extraer `blockPropertySections.js` por secciones
 
-**Estado:** pendiente.
+**Estado:** completado.
 
 **Motivo:** es el refactor más rentable. Baja complejidad visual y facilita seguir agregando componentes.
 
-**Idea objetivo:**
+**Resultado:** `blockPropertySections.js` quedó como fachada fina. Las secciones y helpers del inspector viven bajo `src/view/propertyPanel/`.
+
+**Archivos creados:**
 
 ```text
-src/view/propertyPanel/
-  renderPropertyPanel.js
-  propertyControls.js
-  sections/
-    appearanceSection.js
-    typographySection.js
-    textSection.js
-    ruledTextSection.js
-    lineSection.js
-    gridSection.js
-    imageSection.js
-    iconSection.js
+src/view/propertyPanel/blockDisplayName.js
+src/view/propertyPanel/propertyBindings.js
+src/view/propertyPanel/propertyOptions.js
+src/view/propertyPanel/renderSpecificProperties.js
+src/view/propertyPanel/sections/appearanceSection.js
+src/view/propertyPanel/sections/typographySection.js
+src/view/propertyPanel/sections/textSection.js
+src/view/propertyPanel/sections/ruledTextSection.js
+src/view/propertyPanel/sections/lineSection.js
+src/view/propertyPanel/sections/gridSection.js
+src/view/propertyPanel/sections/imageSection.js
+src/view/propertyPanel/sections/iconSection.js
 ```
 
-**Criterio de finalización:** `blockPropertySections.js` deja de contener todas las secciones específicas y queda como dispatcher fino o desaparece reemplazado por `propertyPanel`.
+**Archivos modificados:**
+
+```text
+src/view/blockPropertySections.js
+```
+
+**Criterio de finalización:** cumplido. `blockPropertySections.js` dejó de contener todas las secciones específicas y ahora reexporta piezas del nuevo panel.
+
+**Verificación sugerida:** abrir menú contextual de cada tipo de bloque y confirmar que aparecen las mismas secciones y que los cambios se aplican.
 
 ---
 
@@ -234,3 +244,5 @@ src/
 - Paso 0 creado.
 - Plan registrado en `docs/REFACTOR_TRACKER.md`.
 - No se inició el Paso 1.
+- Paso 1 completado: `blockPropertySections.js` se extrajo por secciones bajo `src/view/propertyPanel/`.
+- Próximo paso: Paso 2 — extraer transacción/autosave del controller.
