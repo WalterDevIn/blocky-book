@@ -39,7 +39,7 @@ export function renderContextMenu({ editorState, controller }) {
     },
   }, [
     el("div", { className: "context-menu__title", textContent: title }),
-    renderCommonProperties({ block: primaryBlock, controller }),
+    renderCommonProperties({ block: primaryBlock, editorState, controller }),
     renderTypographyProperties({ block: primaryBlock, controller }),
     sameType ? renderSpecificProperties({ block: primaryBlock, controller }) : null,
   ]);
