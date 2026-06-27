@@ -12,6 +12,8 @@ export const DEFAULT_COMMON_STYLE = {
   fontSizePt: 11,
   hasBorder: true,
   useFineSnap: false,
+  useAdvancedBorder: false,
+  borderWidthMm: 0.25,
   borderRadiusMm: 0,
   borderTopWidthMm: 0.25,
   borderRightWidthMm: 0.25,
@@ -61,6 +63,7 @@ export function getCommonStyle(block) {
     fontSizePt: block.props.fontSizePt ?? DEFAULT_COMMON_STYLE.fontSizePt,
     ...block.props.style,
   };
+  const borderWidthMm = clampNumber(nextStyle.borderWidthMm, 0, 20, DEFAULT_COMMON_STYLE.borderWidthMm);
 
   return {
     ...nextStyle,
@@ -71,10 +74,12 @@ export function getCommonStyle(block) {
     textOpacity: clampNumber(nextStyle.textOpacity, 0, 1, DEFAULT_COMMON_STYLE.textOpacity),
     borderOpacity: clampNumber(nextStyle.borderOpacity, 0, 1, DEFAULT_COMMON_STYLE.borderOpacity),
     useFineSnap: nextStyle.useFineSnap === true,
-    borderTopWidthMm: clampNumber(nextStyle.borderTopWidthMm, 0, 20, DEFAULT_COMMON_STYLE.borderTopWidthMm),
-    borderRightWidthMm: clampNumber(nextStyle.borderRightWidthMm, 0, 20, DEFAULT_COMMON_STYLE.borderRightWidthMm),
-    borderBottomWidthMm: clampNumber(nextStyle.borderBottomWidthMm, 0, 20, DEFAULT_COMMON_STYLE.borderBottomWidthMm),
-    borderLeftWidthMm: clampNumber(nextStyle.borderLeftWidthMm, 0, 20, DEFAULT_COMMON_STYLE.borderLeftWidthMm),
+    useAdvancedBorder: nextStyle.useAdvancedBorder === true,
+    borderWidthMm,
+    borderTopWidthMm: clampNumber(nextStyle.borderTopWidthMm, 0, 20, borderWidthMm),
+    borderRightWidthMm: clampNumber(nextStyle.borderRightWidthMm, 0, 20, borderWidthMm),
+    borderBottomWidthMm: clampNumber(nextStyle.borderBottomWidthMm, 0, 20, borderWidthMm),
+    borderLeftWidthMm: clampNumber(nextStyle.borderLeftWidthMm, 0, 20, borderWidthMm),
     borderTopLeftRadiusMm: nullableNumber(nextStyle.borderTopLeftRadiusMm),
     borderTopRightRadiusMm: nullableNumber(nextStyle.borderTopRightRadiusMm),
     borderBottomRightRadiusMm: nullableNumber(nextStyle.borderBottomRightRadiusMm),
