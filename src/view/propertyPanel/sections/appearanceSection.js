@@ -50,21 +50,11 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       checked: style.hasBorder,
       onChange: (value) => updateCommonStyle(controller, { hasBorder: value }),
     })),
-    field("Radio general", numberControl({
-      value: style.borderRadiusMm,
-      min: 0,
-      max: 20,
-      step: 0.5,
-      onChange: (value) => updateCommonStyle(controller, { borderRadiusMm: value }),
+    field("Bordes avanzados", checkboxControl({
+      checked: style.useAdvancedBorder,
+      onChange: (value) => updateCommonStyle(controller, { useAdvancedBorder: value }),
     })),
-    renderSideNumberField("Borde sup.", style.borderTopWidthMm, "borderTopWidthMm", controller),
-    renderSideNumberField("Borde der.", style.borderRightWidthMm, "borderRightWidthMm", controller),
-    renderSideNumberField("Borde inf.", style.borderBottomWidthMm, "borderBottomWidthMm", controller),
-    renderSideNumberField("Borde izq.", style.borderLeftWidthMm, "borderLeftWidthMm", controller),
-    renderSideNumberField("Radio sup. izq.", style.borderTopLeftRadiusMm ?? style.borderRadiusMm, "borderTopLeftRadiusMm", controller),
-    renderSideNumberField("Radio sup. der.", style.borderTopRightRadiusMm ?? style.borderRadiusMm, "borderTopRightRadiusMm", controller),
-    renderSideNumberField("Radio inf. der.", style.borderBottomRightRadiusMm ?? style.borderRadiusMm, "borderBottomRightRadiusMm", controller),
-    renderSideNumberField("Radio inf. izq.", style.borderBottomLeftRadiusMm ?? style.borderRadiusMm, "borderBottomLeftRadiusMm", controller),
+    ...renderBorderModeFields({ style, controller }),
     field("Layer", numberControl({
       value: style.layer,
       min: 0,
@@ -73,6 +63,26 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onChange: (value) => updateCommonStyle(controller, { layer: value }),
     })),
   ]);
+}
+
+function renderBorderModeFields({ style, controller }) {
+  if (!style.useAdvancedBorder) {
+    return [
+      renderSideNumberField("Grosor borde", style.borderWidthMm, "borderWidthMm", controller),
+      renderSideNumberField("Radio borde", style.borderRadiusMm, "borderRadiusMm", controller),
+    ];
+  }
+
+  return [
+    renderSideNumberField("Borde sup.", style.borderTopWidthMm, "borderTopWidthMm", controller),
+    renderSideNumberField("Borde der.", style.borderRightWidthMm, "borderRightWidthMm", controller),
+    renderSideNumberField("Borde inf.", style.borderBottomWidthMm, "borderBottomWidthMm", controller),
+    renderSideNumberField("Borde izq.", style.borderLeftWidthMm, "borderLeftWidthMm", controller),
+    renderSideNumberField("Radio sup. izq.", style.borderTopLeftRadiusMm ?? style.borderRadiusMm, "borderTopLeftRadiusMm", controller),
+    renderSideNumberField("Radio sup. der.", style.borderTopRightRadiusMm ?? style.borderRadiusMm, "borderTopRightRadiusMm", controller),
+    renderSideNumberField("Radio inf. der.", style.borderBottomRightRadiusMm ?? style.borderRadiusMm, "borderBottomRightRadiusMm", controller),
+    renderSideNumberField("Radio inf. izq.", style.borderBottomLeftRadiusMm ?? style.borderRadiusMm, "borderBottomLeftRadiusMm", controller),
+  ];
 }
 
 function renderSideNumberField(label, value, key, controller) {
