@@ -103,17 +103,16 @@ function updateLiveLineElement(blockId, update) {
   blockElement.style.width = `${update.frame.width}mm`;
   blockElement.style.height = `${update.frame.height}mm`;
 
-  const lineElement = blockElement.querySelector(".line-block__segment");
-  if (lineElement) {
+  blockElement.querySelectorAll(".line-block__segment").forEach((lineElement) => {
     lineElement.setAttribute("x1", `${update.line.start.x}`);
     lineElement.setAttribute("y1", `${update.line.start.y}`);
     lineElement.setAttribute("x2", `${update.line.end.x}`);
     lineElement.setAttribute("y2", `${update.line.end.y}`);
-  }
+  });
 
   blockElement.querySelectorAll(".line-endpoint-handle").forEach((handle) => {
-    const endpoint = handle.dataset.endpoint;
-    const point = endpoint === "start" ? update.line.start : update.line.end;
+    const handleEndpoint = handle.dataset.endpoint;
+    const point = handleEndpoint === "start" ? update.line.start : update.line.end;
     handle.style.left = `${point.x}mm`;
     handle.style.top = `${point.y}mm`;
   });
