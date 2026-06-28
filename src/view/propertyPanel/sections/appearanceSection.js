@@ -1,3 +1,4 @@
+import { BLOCK_TYPES } from "../../../blocks/blockTypes.js";
 import { getCommonStyle } from "../../../blocks/blockStyle.js";
 import {
   checkboxControl,
@@ -10,6 +11,7 @@ import { updateCommonStyle } from "../propertyBindings.js";
 
 export function renderAppearanceSection({ block, editorState, controller }) {
   const style = getCommonStyle(block);
+  const textColorLabel = block.type === BLOCK_TYPES.line ? "Color línea" : "Texto";
 
   return section("Apariencia", [
     field("Snap 2.5mm", checkboxControl({
@@ -26,8 +28,8 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onColorChange: (value) => updateCommonStyle(controller, { backgroundColor: value, backgroundColorId: "" }),
       onOpacityChange: (value) => updateCommonStyle(controller, { backgroundOpacity: value, backgroundColorId: "" }),
     }), { className: "property-field--color" }),
-    field("Texto", colorReferenceControl({
-      label: "Texto",
+    field(textColorLabel, colorReferenceControl({
+      label: textColorLabel,
       globalColors: editorState.globalColors,
       colorId: style.textColorId,
       color: style.textColor,
@@ -36,7 +38,7 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onColorChange: (value) => updateCommonStyle(controller, { textColor: value, textColorId: "" }),
       onOpacityChange: (value) => updateCommonStyle(controller, { textOpacity: value, textColorId: "" }),
     }), { className: "property-field--color" }),
-    field("Borde", colorReferenceControl({
+    block.type === BLOCK_TYPES.line ? null : field("Borde", colorReferenceControl({
       label: "Borde",
       globalColors: editorState.globalColors,
       colorId: style.borderColorId,
@@ -46,15 +48,15 @@ export function renderAppearanceSection({ block, editorState, controller }) {
       onColorChange: (value) => updateCommonStyle(controller, { borderColor: value, borderColorId: "" }),
       onOpacityChange: (value) => updateCommonStyle(controller, { borderOpacity: value, borderColorId: "" }),
     }), { className: "property-field--color" }),
-    field("Borde visible", checkboxControl({
+    block.type === BLOCK_TYPES.line ? null : field("Borde visible", checkboxControl({
       checked: style.hasBorder,
       onChange: (value) => updateCommonStyle(controller, { hasBorder: value }),
     })),
-    field("Bordes avanzados", checkboxControl({
+    block.type === BLOCK_TYPES.line ? null : field("Bordes avanzados", checkboxControl({
       checked: style.useAdvancedBorder,
       onChange: (value) => updateCommonStyle(controller, { useAdvancedBorder: value }),
     })),
-    ...renderBorderModeFields({ style, controller }),
+    block.type === BLOCK_TYPES.line ? null : renderBorderModeFields({ style, controller }),
     field("Layer", numberControl({
       value: style.layer,
       min: 0,
