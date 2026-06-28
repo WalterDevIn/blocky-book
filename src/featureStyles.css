@@ -11,6 +11,48 @@
   pointer-events: none;
 }
 
+.block--line {
+  min-width: 1mm;
+  min-height: 1mm;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.block--line.is-selected {
+  outline: 1px dashed rgba(37, 99, 235, 0.48);
+  outline-offset: 2px;
+}
+
+.line-block__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.line-block__hit-area {
+  pointer-events: stroke;
+}
+
+.line-endpoint-handle {
+  position: absolute;
+  z-index: 3;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--selected);
+  border-radius: 50%;
+  padding: 0;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.22);
+  cursor: grab;
+  transform: translate(-50%, -50%);
+}
+
+.line-endpoint-handle:active {
+  cursor: grabbing;
+}
+
 .block__content--labeled {
   position: relative;
   display: grid;
