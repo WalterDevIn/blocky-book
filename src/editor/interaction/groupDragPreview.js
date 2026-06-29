@@ -1,48 +1,67 @@
-export function createGroupDragPreview({ pageElement, blockIds, sourceBlockId }) {
+export function createGroupDragPreview({ pageElement, blockIds }) {
   const previews = blockIds
-    .filter((blockId) => blockId !== sourceBlockId)
     .map((blockId) => {
       const element = pageElement.querySelector(`[data-block-id="${blockId}"]`);
       if (!element) return null;
 
-      const ghost = element.cloneNode(true);
-      ghost.classList.remove("is-selected", "is-editing", "is-dropping");
-      ghost.classList.add("is-group-drag-ghost", "is-picking");
-      ghost.style.left = element.style.left;
-      ghost.style.top = element.style.top;
-      ghost.style.width = element.style.width;
-      ghost.style.height = element.style.height;
-      ghost.querySelectorAll(".resize-handle").forEach((handle) => handle.remove());
-
       element.classList.add("is-drag-source");
-      pageElement.appendChild(ghost);
-      window.setTimeout(() => {
-        ghost.classList.remove("is-picking");
-        ghost.classList.add("is-dragging");
-      }, 150);
-
       return {
         element,
-        ghost,
-        startFrame: readFrameFromElement(element),
+        frame: readFrameFromElement(element),
       };
     })
     .filter(Boolean);
 
+  const bounds = getGroupBounds(previews);
+  const outline = bounds ? createGroupOutline({ pageElement, bounds }) : null;
+
   return {
     move(delta) {
-      previews.forEach((preview) => {
-        preview.ghost.style.left = `${preview.startFrame.x + delta.x}mm`;
-        preview.ghost.style.top = `${preview.startFrame.y + delta.y}mm`;
-      });
+      if (!outline || !bounds) return;
+
+      outline.style.left = `${bounds.x + delta.x}mm`;
+      outline.style.top = `${bounds.y + delta.y}mm`;
     },
 
     clear() {
       previews.forEach((preview) => {
         preview.element.classList.remove("is-drag-source");
-        preview.ghost.remove();
       });
+      outline?.remove();
     },
+  };
+}
+
+function createGroupOutline({ pageElement, bounds }) {
+  const outline = document.createElement("div");
+  outline.className = "group-drag-outline is-picking";
+  outline.style.left = `${bounds.x}mm`;
+  outline.style.top = `${bounds.y}mm`;
+  outline.style.width = `${bounds.width}mm`;
+  outline.style.height = `${bounds.height}mm`;
+
+  pageElement.appendChild(outline);
+  window.setTimeout(() => {
+    outline.classList.remove("is-picking");
+    outline.classList.add("is-dragging");
+  }, 150);
+
+  return outline;
+}
+
+function getGroupBounds(previews) {
+  if (previews.length === 0) return null;
+
+  const minX = Math.min(...previews.map((preview) => preview.frame.x));
+  const minY = Math.min(...previews.map((preview) => preview.frame.y));
+  const maxX = Math.max(...previews.map((preview) => preview.frame.x + preview.frame.width));
+  const maxY = Math.max(...previews.map((preview) => preview.frame.y + preview.frame.height));
+
+  return {
+    x: minX,
+    y: minY,
+    width: Math.max(maxX - minX, 1),
+    height: Math.max(maxY - minY, 1),
   };
 }
 
@@ -50,6 +69,8 @@ function readFrameFromElement(element) {
   return {
     x: parseMm(element.style.left),
     y: parseMm(element.style.top),
+    width: parseMm(element.style.width),
+    height: parseMm(element.style.height),
   };
 }
 
