@@ -96,6 +96,7 @@ export function startBlockDragSession({ event, block, page, pageElement, editorS
 
     if (shouldStartTextEditFromPointerUp({ block, wasSelected, activeSelectionIds, moved, pickedUp })) {
       preview.clearGroup();
+      preview.removeGhost();
       startTextEditFromPointerUp({ block, controller });
       return;
     }
@@ -123,6 +124,7 @@ export function startBlockDragSession({ event, block, page, pageElement, editorS
     }
 
     preview.clearGroup();
+    preview.removeGhost();
     commitPlainSelection({ activeSelectionIds, page, controller });
   };
 
