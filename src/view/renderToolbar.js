@@ -36,6 +36,12 @@ export function renderToolbar({ editorState, controller }) {
         active: editorState.viewport.showPageMargin,
         onClick: () => controller.togglePageMargin(),
       }),
+      iconButton({
+        iconClass: "fa-solid fa-print",
+        label: "Previa de impresión doble faz",
+        active: editorState.ui?.printPreviewOpen === true,
+        onClick: () => controller.openPrintPreview(),
+      }),
     ]),
     el("div", { className: "toolbar__group", title: "Selección" }, [
       iconButton({
