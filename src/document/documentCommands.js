@@ -159,20 +159,20 @@ export function updateBlockFrame(documentModel, blockId, nextFrame) {
 }
 
 export function translateBlocks(documentModel, blockIds, delta) {
-  return blockIds
-    .map((blockId) => {
-      const found = findBlockById(documentModel, blockId);
-      if (!found) return null;
-
-      found.block.frame = constrainFrameToPage({
-        ...found.block.frame,
-        x: found.block.frame.x + delta.x,
-        y: found.block.frame.y + delta.y,
-      }, documentModel.pageSpec, getMinimumFrameSize(found.block));
-
-      return found.block;
-    })
+  const blocks = blockIds
+    .map((blockId) => findBlockById(documentModel, blockId)?.block)
     .filter(Boolean);
+  const groupDelta = clampGroupDelta(blocks, delta, documentModel.pageSpec);
+
+  blocks.forEach((block) => {
+    block.frame = {
+      ...block.frame,
+      x: block.frame.x + groupDelta.x,
+      y: block.frame.y + groupDelta.y,
+    };
+  });
+
+  return blocks;
 }
 
 export function updateBlockProps(documentModel, blockId, nextProps) {
@@ -188,4 +188,29 @@ export function updateBlocksProps(documentModel, blockIds, nextProps) {
   return blockIds
     .map((blockId) => updateBlockProps(documentModel, blockId, nextProps))
     .filter(Boolean);
+}
+
+function clampGroupDelta(blocks, delta, pageSpec) {
+  const bounds = getGroupBounds(blocks);
+  if (!bounds) return delta;
+
+  return {
+    x: clamp(delta.x, -bounds.x, pageSpec.widthMm - bounds.right),
+    y: clamp(delta.y, -bounds.y, pageSpec.heightMm - bounds.bottom),
+  };
+}
+
+function getGroupBounds(blocks) {
+  if (blocks.length === 0) return null;
+
+  const x = Math.min(...blocks.map((block) => block.frame.x));
+  const y = Math.min(...blocks.map((block) => block.frame.y));
+  const right = Math.max(...blocks.map((block) => block.frame.x + block.frame.width));
+  const bottom = Math.max(...blocks.map((block) => block.frame.y + block.frame.height));
+
+  return { x, y, right, bottom };
+}
+
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
 }
