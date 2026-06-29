@@ -1,5 +1,5 @@
 import { el } from "../../shared/dom.js";
-import { colorControl, numberControl, textControl } from "../propertyControls.js";
+import { numberControl, textControl } from "../propertyControls.js";
 
 export function colorReferenceControl({
   label,
@@ -15,27 +15,46 @@ export function colorReferenceControl({
   const previewHex = selectedGlobalColor?.hex ?? color;
   const previewOpacity = selectedGlobalColor?.opacity ?? opacity;
 
-  return el("details", { className: "color-picker" }, [
-    el("summary", { className: "color-picker__summary" }, [
+  return el("details", { className: "color-picker color-picker--swatch-only" }, [
+    el("summary", {
+      className: "color-picker__summary",
+      title: selectedGlobalColor ? selectedGlobalColor.name : `${label}: local`,
+    }, [
       el("span", {
-        className: "color-picker__swatch",
+        className: "color-picker__swatch color-picker__swatch--button",
         style: { backgroundColor: colorWithOpacity(previewHex, previewOpacity) },
       }),
-      el("span", {
-        className: "color-picker__summary-text",
-        textContent: selectedGlobalColor ? selectedGlobalColor.name : "Local",
-      }),
-      el("span", { className: "color-picker__chevron", textContent: "▾" }),
     ]),
     el("div", { className: "color-picker__panel" }, [
       el("div", { className: "color-picker__title", textContent: `Color de ${label.toLowerCase()}` }),
       renderGlobalChoices({ globalColors, colorId, onGlobalChange }),
       el("div", { className: "color-picker__separator" }),
       el("div", { className: "color-picker__subtitle", textContent: "Color local" }),
-      el("div", { className: "color-picker__local" }, [
-        colorControl({ value: color, onChange: onColorChange }),
-        textControl({ value: color, placeholder: "#2563eb", onChange: onColorChange }),
-        numberControl({ value: opacity, min: 0, max: 1, step: 0.05, onChange: onOpacityChange }),
+      el("div", { className: "color-picker__local-editor" }, [
+        el("div", {
+          className: "color-picker__local-preview",
+          style: { backgroundColor: colorWithOpacity(color, opacity) },
+        }),
+        el("div", { className: "color-picker__local-fields" }, [
+          labeledLocalControl("Código", textControl({
+            value: color,
+            placeholder: "#2563eb",
+            onChange: (value) => {
+              onGlobalChange("");
+              onColorChange(value);
+            },
+          })),
+          labeledLocalControl("Opacidad", numberControl({
+            value: opacity,
+            min: 0,
+            max: 1,
+            step: 0.05,
+            onChange: (value) => {
+              onGlobalChange("");
+              onOpacityChange(value);
+            },
+          })),
+        ]),
       ]),
     ]),
   ]);
@@ -72,6 +91,13 @@ function colorChoice({ label, hex, opacity, active, onClick }) {
       style: { backgroundColor: colorWithOpacity(hex, opacity) },
     }),
     el("span", { className: "color-picker__choice-label", textContent: label }),
+  ]);
+}
+
+function labeledLocalControl(label, control) {
+  return el("label", { className: "color-picker__local-field" }, [
+    el("span", { className: "color-picker__local-label", textContent: label }),
+    control,
   ]);
 }
 
