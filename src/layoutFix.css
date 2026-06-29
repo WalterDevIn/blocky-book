@@ -29,6 +29,10 @@ body {
   overflow: hidden;
 }
 
+.editor-layout:has(.page-tree-sidebar.is-collapsed) {
+  grid-template-columns: 44px minmax(0, 1fr);
+}
+
 .page-tree-sidebar {
   min-width: 0;
   min-height: 0;
@@ -37,14 +41,23 @@ body {
   background: rgba(248, 250, 252, 0.92);
 }
 
+.page-tree-sidebar.is-collapsed {
+  background: rgba(248, 250, 252, 0.98);
+}
+
 .page-tree-sidebar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
   height: 42px;
-  padding: 0 12px;
+  padding: 0 8px 0 12px;
   border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+}
+
+.page-tree-sidebar.is-collapsed .page-tree-sidebar__header {
+  justify-content: center;
+  padding: 0;
 }
 
 .page-tree-sidebar__title {
@@ -66,6 +79,23 @@ body {
   text-align: center;
 }
 
+.page-tree-sidebar__toggle {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0;
+  color: #475569;
+  background: transparent;
+}
+
+.page-tree-sidebar__toggle:hover {
+  color: #1d4ed8;
+  background: #e0e7ff;
+}
+
 .page-tree {
   height: calc(100% - 42px);
   overflow: auto;
@@ -85,7 +115,7 @@ body {
 
 .page-tree__page-button {
   display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) auto;
+  grid-template-columns: 12px 18px minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 7px;
   width: 100%;
@@ -123,12 +153,70 @@ body {
   text-transform: uppercase;
 }
 
+.page-tree__page-count {
+  min-width: 18px;
+  border-radius: 999px;
+  padding: 1px 5px;
+  color: #64748b;
+  background: #e2e8f0;
+  font-size: 10px;
+  font-weight: 850;
+  text-align: center;
+}
+
 .page-tree__children {
-  margin-left: 25px;
+  display: grid;
+  gap: 1px;
+  margin-left: 37px;
   padding: 1px 0 5px 8px;
   border-left: 1px solid #e2e8f0;
   color: #94a3b8;
   font-size: 11px;
+}
+
+.page-tree__children--empty {
+  padding-top: 4px;
+  padding-bottom: 7px;
+  font-style: italic;
+}
+
+.page-tree__block-button {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 26px;
+  border: 0;
+  border-radius: 8px;
+  padding: 4px 6px;
+  color: #475569;
+  background: transparent;
+  text-align: left;
+}
+
+.page-tree__block-button:hover {
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.page-tree__block-button.is-selected {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.page-tree__block-button i {
+  color: currentColor;
+  font-size: 12px;
+}
+
+.page-tree__block-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .editor-viewport {
