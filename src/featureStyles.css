@@ -171,6 +171,57 @@
   pointer-events: none;
 }
 
+.group-drag-ghost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  background: transparent;
+  transform-origin: center;
+}
+
+.group-drag-ghost.is-picking {
+  animation: group-drag-pick-up 150ms ease-out forwards;
+}
+
+.group-drag-ghost.is-dragging {
+  transform: translateY(-7px) rotate(-1deg) scale(1.01);
+  opacity: 0.96;
+}
+
+.group-drag-ghost.is-dropping {
+  animation: group-drag-drop 180ms ease-out forwards;
+}
+
+.group-drag-ghost__item {
+  position: absolute !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+@keyframes group-drag-pick-up {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-7px) rotate(-1deg) scale(1.01);
+    opacity: 0.96;
+  }
+}
+
+@keyframes group-drag-drop {
+  0% {
+    transform: translateY(-7px) rotate(-1deg) scale(1.01);
+    opacity: 0.96;
+  }
+
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
 .settings-panel {
   display: inline-flex;
   align-items: center;
